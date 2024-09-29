@@ -29,6 +29,7 @@
   - TypeScript
   - CSS3
   - Thymeleaf
+  - Bootstrap
   
 - **Backend**:
   - Java
