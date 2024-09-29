@@ -28,11 +28,11 @@
   - React
   - TypeScript
   - CSS3
-  - Thymeleaf
   - Bootstrap
   
 - **Backend**:
   - Java
+  - Thymeleaf
   - Spring Boot
   
 - **Database**:
