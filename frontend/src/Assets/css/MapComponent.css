@@ -1,0 +1,107 @@
+.map-wrapper {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    transition: margin-left 0.3s;
+}
+
+.map-component {
+    width: 100%;
+    height: 100%; /* Adjust height to fit within the new height of the App component */
+    background-color: #fff;
+    overflow: hidden; /* Allow scrolling if content overflows */
+}
+
+.map-container {
+    flex-grow: 1;
+    position: relative;
+}
+
+/*Weather*/
+
+.weather-popup {
+    position: absolute;
+    bottom: 60px;  /* Adjust this value to position it above the current location button */
+    right: -110px;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.weather-popup button {
+    float: right;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/*Tabs*/
+
+.tabs-container {
+    position: absolute;
+    top: 10px;
+    left: 75%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+/*Post*/
+.post-button-container {
+    position: absolute;
+    top: 2vh;
+    right: 15vh;
+    z-index: 1000;
+}
+
+.user-profile-container{
+    position: absolute;
+    top: 15vh;
+    right: 2vh;
+    z-index: 1000;
+    background: #f9f9f9;
+}
+
+.user-profile-button{
+    background: #f9f9f9;
+}
+
+.user-signin-button{
+    background: #f9f9f9;
+}
+
+/* Container for the What3Words autosuggest */
+.what3words-autosuggest-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    /* margin: 20px auto; */
+}
+
+/* Input field styling */
+.what3words-autosuggest-container input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 1px solid #DD2255;
+    border-radius: 25px;
+    background-color: #f9f9f9;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Input focus state */
+.what3words-autosuggest-container input:focus {
+    border-color: #DD2255;
+    box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Placeholder text styling */
+.what3words-autosuggest-container input::placeholder {
+    color: #000000;
+}
