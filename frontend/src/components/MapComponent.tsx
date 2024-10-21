@@ -13,9 +13,9 @@ import Button from "react-bootstrap/Button";
 import SuppressErrorBoundary from "./Exception/SuppressErrorBoundary";
 import ErrorBoundary from "./Exception/ErrorBoundary";
 
-const API_KEY = '4BT9O5NR';  // What3Words API key
-const MAP_API_KEY = 'AIzaSyDIRFZk0OcgUFUn8Qw00te7r4mmls6eALI';  // Google Maps API key
-const WEATHER_API_KEY = '9e39bcf3d5d4d16d46058e69edb02e8d';  // OpenWeatherMap API key
+const API_KEY = process.env.REACT_APP_WHAT3WORDS_API_KEY;
+const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY // Google Maps API key
+const WEATHER_API_KEY = process.env.REACT_APP_WEATHER_API_KEY  // OpenWeatherMap API key
 
 const MapComponent: React.FC = () => {
     const [currentLocation, setCurrentLocation] = useState<{ lat: number, lng: number } | null>(null);
@@ -197,18 +197,18 @@ const MapComponent: React.FC = () => {
                     style={{width: '100%', height: '100%'}}
                 >
                     <div slot="map" style={{width: '100%', height: '100%'}}/>
-                    {/*<div slot="search-control" style={{margin: '10px 0 0 10px'}}>*/}
-                    {/*    <What3wordsAutosuggest>*/}
-                    {/*        <div className="what3words-autosuggest-container">*/}
-                    {/*            <input*/}
-                    {/*                type="text"*/}
-                    {/*                className='what3words-autosuggest-container'*/}
-                    {/*                placeholder="Find your address"*/}
-                    {/*                autoComplete="off"*/}
-                    {/*            />*/}
-                    {/*        </div>*/}
-                    {/*    </What3wordsAutosuggest>*/}
-                    {/*</div>*/}
+                    <div slot="search-control" style={{margin: '10px 0 0 10px'}}>
+                        <What3wordsAutosuggest>
+                            <div className="what3words-autosuggest-container">
+                                <input
+                                    type="text"
+                                    className='what3words-autosuggest-container'
+                                    placeholder="Find your address"
+                                    autoComplete="off"
+                                />
+                            </div>
+                        </What3wordsAutosuggest>
+                    </div>
                     <div slot="current-location-control" style={{margin: '0 10px 10px 0'}}>
                         <CurrentLocationButton onClick={handleCurrentLocation}/>
                     </div>
