@@ -64,7 +64,7 @@ const MapComponent: React.FC = () => {
                     if (mapRef.current && mapRef.current.map) {
                         mapRef.current.map.setCenter({ lat: latitude, lng: longitude });
                     }
-                    fetchWeatherData({ lat: latitude, lng: longitude });
+                    fetchWeatherData({lat: latitude, lng: longitude}).then(r =>{});
                 },
                 (error) => {
                     console.error('Error getting current location:', error);
@@ -102,7 +102,7 @@ const MapComponent: React.FC = () => {
         const { lat, lng } = event.detail.coordinates;
         setSelectedLatLng({ lat, lng });
         setIsCoordinatesVisible(true);
-        fetchWeatherData({ lat, lng });
+        fetchWeatherData({lat, lng}).then(r =>{});
     };
 
     useEffect(() => {
@@ -197,20 +197,18 @@ const MapComponent: React.FC = () => {
                     style={{width: '100%', height: '100%'}}
                 >
                     <div slot="map" style={{width: '100%', height: '100%'}}/>
-                    <div slot="search-control" style={{margin: '10px 0 0 10px'}}>
-                        <ErrorBoundary>
-                        <What3wordsAutosuggest>
-                            <div className="what3words-autosuggest-container">
-                                <input
-                                    type="text"
-                                    className='what3words-autosuggest-container'
-                                    placeholder="Find your address"
-                                    autoComplete="off"
-                                />
-                            </div>
-                        </What3wordsAutosuggest>
-                        </ErrorBoundary>
-                    </div>
+                    {/*<div slot="search-control" style={{margin: '10px 0 0 10px'}}>*/}
+                    {/*    <What3wordsAutosuggest>*/}
+                    {/*        <div className="what3words-autosuggest-container">*/}
+                    {/*            <input*/}
+                    {/*                type="text"*/}
+                    {/*                className='what3words-autosuggest-container'*/}
+                    {/*                placeholder="Find your address"*/}
+                    {/*                autoComplete="off"*/}
+                    {/*            />*/}
+                    {/*        </div>*/}
+                    {/*    </What3wordsAutosuggest>*/}
+                    {/*</div>*/}
                     <div slot="current-location-control" style={{margin: '0 10px 10px 0'}}>
                         <CurrentLocationButton onClick={handleCurrentLocation}/>
                     </div>
