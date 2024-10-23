@@ -13,8 +13,6 @@ import Button from "react-bootstrap/Button";
 import SuppressErrorBoundary from "./Exception/SuppressErrorBoundary";
 import ErrorBoundary from "./Exception/ErrorBoundary";
 import WeatherCard from "./Homepage/WeatherCard";
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import LatLng = google.maps.LatLng;
 
 const API_KEY = process.env.REACT_APP_WHAT3WORDS_API_KEY;
 const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY // Google Maps API key
@@ -127,10 +125,6 @@ const MapComponent: React.FC = () => {
     const closeWeatherPopup = () => {
         setIsWeatherPopupVisible(false);
     };
-    const mapOptions: google.maps.MapOptions = {
-        center: { lat: 37.7749, lng: -122.4194 }, // San Francisco example
-        zoom: 12,
-    };
     // const position = { lat: -25.344, lng: 131.031 };
     // const map = new google.maps.Map(
     //     document.getElementById('map') as HTMLElement,
@@ -217,7 +211,6 @@ const MapComponent: React.FC = () => {
                         </What3wordsAutosuggest>
                     </div>
 
-                    <Marker position={center} title="Hello, San Francisco!" />
                     <div slot="current-location-control" style={{margin: '0 10px 10px 0'}}>
                         <CurrentLocationButton onClick={handleCurrentLocation}/>
                     </div>
