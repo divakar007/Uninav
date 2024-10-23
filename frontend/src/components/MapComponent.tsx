@@ -12,6 +12,9 @@ import UserDataLogger from "./User/UserDataLogger";
 import Button from "react-bootstrap/Button";
 import SuppressErrorBoundary from "./Exception/SuppressErrorBoundary";
 import ErrorBoundary from "./Exception/ErrorBoundary";
+import WeatherCard from "./Homepage/WeatherCard";
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import LatLng = google.maps.LatLng;
 
 const API_KEY = process.env.REACT_APP_WHAT3WORDS_API_KEY;
 const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY // Google Maps API key
@@ -124,11 +127,10 @@ const MapComponent: React.FC = () => {
     const closeWeatherPopup = () => {
         setIsWeatherPopupVisible(false);
     };
-
-    // const mapOptions: google.maps.MapOptions = {
-    //     center: { lat: 37.7749, lng: -122.4194 }, // San Francisco example
-    //     zoom: 12,
-    // };
+    const mapOptions: google.maps.MapOptions = {
+        center: { lat: 37.7749, lng: -122.4194 }, // San Francisco example
+        zoom: 12,
+    };
     // const position = { lat: -25.344, lng: 131.031 };
     // const map = new google.maps.Map(
     //     document.getElementById('map') as HTMLElement,
@@ -150,6 +152,11 @@ const MapComponent: React.FC = () => {
     // Function to close the form
     const closeForm = () => {
         setShowForm(false);
+    };
+
+    const center = {
+        lat: 37.7749, // San Francisco latitude
+        lng: -122.4194 // San Francisco longitude
     };
 
     return (
@@ -209,6 +216,8 @@ const MapComponent: React.FC = () => {
                             </div>
                         </What3wordsAutosuggest>
                     </div>
+
+                    <Marker position={center} title="Hello, San Francisco!" />
                     <div slot="current-location-control" style={{margin: '0 10px 10px 0'}}>
                         <CurrentLocationButton onClick={handleCurrentLocation}/>
                     </div>
@@ -249,26 +258,7 @@ const MapComponent: React.FC = () => {
                     </div>
                 )}
 
-                {isWeatherPopupVisible && (
-                    <div className="weather-popup">
-                        <button onClick={closeWeatherPopup} style={{float: 'right'}}>Close</button>
-                        <h3>Weather Information</h3>
-                        {isLoadingWeather ? (
-                            <p>Loading weather data...</p>
-                        ) : weatherError ? (
-                            <p style={{color: 'red'}}>{weatherError}</p>
-                        ) : weatherData ? (
-                            <div>
-                                <p>Temperature: {weatherData.main.temp.toFixed(1)}°C</p>
-                                <p>Weather: {weatherData.weather[0].description}</p>
-                                <p>Humidity: {weatherData.main.humidity}%</p>
-                                <p>Wind Speed: {weatherData.wind.speed} m/s</p>
-                            </div>
-                        ) : (
-                            <p>No weather data available</p>
-                        )}
-                    </div>
-                )}
+                <WeatherCard isWeatherPopupVisible={isWeatherPopupVisible} isLoadingWeather={isLoadingWeather} weatherError={weatherError} weatherData={weatherData} closeWeatherPopup={closeWeatherPopup}/>
 
             </div>
         </div>
