@@ -21,9 +21,10 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String phoneNumber;
+    private boolean verified;
 
 
-    public User(String id, String name, String email, String profileImage, List<String> favorites, String role, LocalDateTime createdAt, LocalDateTime updatedAt, String phoneNumber) {
+    public User(String id, String name, String email, String profileImage, List<String> favorites, String role, LocalDateTime createdAt, LocalDateTime updatedAt, String phoneNumber, boolean verified) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -33,5 +34,6 @@ public class User {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.phoneNumber = phoneNumber;
+        this.verified = false;
     }
 }

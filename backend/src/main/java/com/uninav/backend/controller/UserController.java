@@ -33,9 +33,9 @@ public class UserController {
         String phoneNumber = (String) userData.get("phoneNumber");
         List<String> favorites = (List<String>) userData.get("favorites");
         String role = (String) userData.get("role");
+        boolean verified = (boolean) userData.get("verified");
 
-
-        boolean isNewUser = userService.saveUserIfNew(userId, name, email, createdAt, updatedAt, profileImage, phoneNumber, favorites, role);
+        boolean isNewUser = userService.saveUserIfNew(userId, name, email, createdAt, updatedAt, profileImage, phoneNumber, favorites, role, verified);
 
         Map<String, Object> response = new HashMap<>();
         if (isNewUser) {

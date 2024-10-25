@@ -8,7 +8,7 @@
 }
 
 .tabs * {
-    z-index: 2;
+    z-index: 1000;
 }
 
 .container input[type="radio"] {

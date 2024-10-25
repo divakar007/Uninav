@@ -1,5 +1,6 @@
 package com.uninav.backend.controller;
 
+import com.uninav.backend.model.Address;
 import com.uninav.backend.model.Event;
 import com.uninav.backend.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +43,12 @@ public class EventController {
     }
 
     @GetMapping("/get-rsvp-count")
-    public ResponseEntity<Map<String, Object>> getRsvpCount(@RequestBody Map<String, Object> eventData) {
+    public ResponseEntity<Map<String, Object>> getRsvpCount(@RequestBody Event eventData) {
         try {
-            Optional<Event> event = eventService.getEventById(eventData.get("id").toString());
             Map<String, Object> response = new HashMap<>();
-            response.put("yes", event.get().getAttendees());
-            response.put("no", event.get().getDeclinedAttendees());
-            response.put("maybe", event.get().getMaybeAttendees());
+            response.put("yes", eventData.getAttendees());
+            response.put("no", eventData.getDeclinedAttendees());
+            response.put("maybe", eventData.getMaybeAttendees());
             response.put("status", "success");
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
@@ -74,7 +74,7 @@ public class EventController {
     public ResponseEntity<Map<String, Object>> addEvent(@RequestBody Map<String, Object> eventData) {
         try {
 
-//            eventService.createEvent(eventData);
+            eventService.createEvent((Event) eventData);
             Map<String, Object> response = new HashMap<>();
             response.put("status", "success");
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -93,18 +93,6 @@ public class EventController {
     @GetMapping("/get-event")
     public Event getEvent(@RequestBody Map<String, Object> eventData) {
         return null;
-    }
-
-    public Event eventDataToEvent(Map<String, Object> eventData) {
-       Event event = new Event();
-       event.setId(eventData.get("id").toString());
-       event.setAddress(eventData.getOrDefault("address", "").toString());
-       event.setAttendees(List.of(eventData.getOrDefault("yes", 0).toString()));
-       event.setDeclinedAttendees(List.of(eventData.get("no").toString()));
-       event.setMaybeAttendees(List.of(eventData.get("maybe").toString()));
-       event.setImageUrl(eventData.get("imageUrl").toString());
-
-       return event;
     }
 
 }

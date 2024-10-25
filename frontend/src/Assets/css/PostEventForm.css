@@ -1,0 +1,63 @@
+.post-event-form {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    position: relative;
+}
+
+.input-group > .form-control {
+    border-right: none;
+}
+
+.input-group > .btn-outline-secondary {
+    border-left: none;
+}
+
+.guest-avatars {
+    display: flex;
+    align-items: center;
+}
+
+.guest-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.guest-count {
+    font-size: 14px;
+    margin-left: 10px;
+    color: #6c757d;
+}
+
+.attachment-list {
+    margin-top: 10px;
+}
+
+.attachment-item {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.attachment-name {
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+.attachment-size {
+    margin-left: 10px;
+    color: #6c757d;
+}
+
+.attachment-remove {
+    color: #dc3545;
+    font-size: 20px;
+    line-height: 0;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+}

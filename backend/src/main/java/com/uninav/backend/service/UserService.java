@@ -35,13 +35,13 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public boolean saveUserIfNew(String userId, String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt, String profileImage, String phoneNumber, List<String> favorites, String role) {
+    public boolean saveUserIfNew(String userId, String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt, String profileImage, String phoneNumber, List<String> favorites, String role, boolean verified) {
         Optional<User> user = getUserById(userId);
         if (user.isPresent()) {
             return false;
         }
         else {
-            this.createUser(new User(userId, name, email, profileImage, favorites, role, createdAt, updatedAt, phoneNumber));
+            this.createUser(new User(userId, name, email, profileImage, favorites, role, createdAt, updatedAt, phoneNumber, verified));
             return true;
         }
     }

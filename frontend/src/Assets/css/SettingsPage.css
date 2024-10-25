@@ -1,0 +1,39 @@
+.settings-page {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.header-section .title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.header-section .subtitle {
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.alert {
+    background-color: #6f42c1;
+    color: white;
+}
+
+.notifications-section .notification-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.admins-section .admin-avatar,
+.danger-zone .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.danger-zone h5 {
+    font-size: 18px;
+}
+
+.footer-section .btn {
+    width: 120px;
+}

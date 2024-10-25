@@ -3,44 +3,44 @@ import React from 'react';
 import './../../Assets/css/WeatherCard.css';
 
 interface WeatherCardProps {
-    isWeatherPopupVisible: boolean;
-    isLoadingWeather: boolean;
-    weatherError: string | null;
-    weatherData: any;
-    closeWeatherPopup: () => void;
+    isVisible: boolean,
+    isLoading: boolean,
+    error: string | null,
+    data: any,
+    onClose: () => void,
 }
 
 const WeatherCard: React.FC<WeatherCardProps> = ({
-                                                     isWeatherPopupVisible,
-                                                     isLoadingWeather,
-                                                     weatherError,
-                                                     weatherData,
-                                                     closeWeatherPopup,
+                                                     isVisible,
+                                                     isLoading,
+                                                     error,
+                                                     data,
+                                                     onClose,
                                                  }) => {
-    if (!isWeatherPopupVisible) return null;
+    if (!isVisible) return null;
 
     return (
         <div className="weather-popup">
-            <button className="close-button" onClick={closeWeatherPopup}>
+            <button className="close-button" onClick={onClose}>
                 <i className="fas fa-times"></i>
             </button>
             <h3 className="title">Weather Information</h3>
-            {isLoadingWeather ? (
+            {isLoading ? (
                 <p>Loading weather data...</p>
-            ) : weatherError ? (
-                <p className="error">{weatherError}</p>
-            ) : weatherData ? (
+            ) : error ? (
+                <p className="error">{error}</p>
+            ) : data ? (
                 <div className="weather-card">
-                    <div className="temperature">{weatherData.main.temp.toFixed(1)}°C</div>
+                    <div className="temperature">{data.main.temp.toFixed(1)}°C</div>
                     <div className="details-grid">
-                        <div className="details-item">Real Feel: {weatherData.main.feels_like.toFixed(1)}°C</div>
-                        <div className="details-item">Pressure: {weatherData.main.pressure} hPa</div>
-                        <div className="details-item">Wind Speed: {weatherData.wind.speed} m/s</div>
-                        <div className="details-item">Humidity: {weatherData.main.humidity}%</div>
+                        <div className="details-item">Real Feel: {data.main.feels_like.toFixed(1)}°C</div>
+                        <div className="details-item">Pressure: {data.main.pressure} hPa</div>
+                        <div className="details-item">Wind Speed: {data.wind.speed} m/s</div>
+                        <div className="details-item">Humidity: {data.main.humidity}%</div>
                     </div>
                     <div className="bottom-info">
-                        <div className="weather">{weatherData.weather[0].description}</div>
-                        <div className="location">{weatherData.name}</div>
+                        <div className="weather">{data.weather[0].description}</div>
+                        <div className="location">{data.name}</div>
                     </div>
                 </div>
             ) : (

@@ -1,0 +1,68 @@
+.post-event-container {
+    display: flex;
+    width: calc(100% - 15%); /* Adjusting for 20% sidebar width when expanded */
+    height: 100vh;
+    transition: width 0.3s; /* Smooth transition when sidebar toggles */
+}
+
+/* Adjust width when the sidebar is collapsed */
+.sidebar.collapsed + .post-event-container {
+    width: calc(100% - 6%); /* Adjusting for 6% sidebar width when collapsed */
+}
+
+/* Map component styling */
+.map-component-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    padding: 2%;
+    background-color: #ffffff;
+    overflow: auto;
+    border-radius: 5px;/* Optional background color for clarity */
+}
+
+/* Post event form styling */
+.post-event-form-container {
+    flex: 1;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2%;
+    overflow-y: auto; /* Allow scrolling if form overflows vertically */
+    background-color: #fff; /* Optional background color for clarity */
+}
+
+.w3w-map-component{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: visible;
+}
+
+.fullscreen-map {
+    width: 100%;
+    height: 100%;
+    position: absolute; /* Position the map absolutely within the container */
+    top: 0;
+    left: 0;
+}
+
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 767px) {
+    .post-event-container {
+        flex-direction: column; /* Stack elements vertically */
+        height: auto; /* Adjust height for smaller screens */
+    }
+
+    .map-component-container,
+    .post-event-form-container {
+        width: 100%; /* Full width for smaller screens */
+        height: 50vh; /* Adjust height for smaller screens */
+    }
+}

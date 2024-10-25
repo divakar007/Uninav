@@ -8,7 +8,6 @@ function UserDataLogger() {
     useEffect(() => {
         const saveUserData = async () => {
             if (user) {
-                // Prepare user data
                 const userData = {
                     userId: user.id,
                     name: user.fullName,
@@ -18,7 +17,8 @@ function UserDataLogger() {
                     profileImage: user.imageUrl,
                     phoneNumber: user.primaryPhoneNumber?.phoneNumber,
                     favorites : [],
-                    role : ""
+                    role : "",
+                    verified: false
                 };
 
                 try {

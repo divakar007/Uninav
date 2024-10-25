@@ -49,10 +49,10 @@ const HamburgerMenu: React.FC = () => {
                 <i className="icon">🔔</i>
                 {isHovered && <Link to={"/favorites"}>Favorites</Link>}
             </div>
-            {/*<div className="menu-item">*/}
-            {/*    <i className="icon">📅</i>*/}
-            {/*    {isHovered && <Link to={"/"}></Link>}*/}
-            {/*</div>*/}
+            <div className="menu-item">
+                <i className="icon">📅</i>
+                {isHovered && <Link to={"/post"}>Post</Link>}
+            </div>
             <div className="menu-item">
                 <i className="icon">⚙️</i>
                 {isHovered && <Link to={"/settings"}>Settings</Link>}

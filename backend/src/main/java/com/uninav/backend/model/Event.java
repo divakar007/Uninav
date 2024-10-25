@@ -18,7 +18,9 @@ public class Event {
     private String categoryId; //
     private String organizerId; // Reference to the User
     private String what3wordsAddress; // Storing What3Words address as a string
-    private String address; // Optional: human-readable address
+    private Double latitude;
+    private Double longitude;
+    private Address address; // Optional: human-readable address
     private LocalDateTime date;
     private List<String> attendees; // List of User IDs who RSVPed "Yes"
     private List<String> maybeAttendees; // List of User IDs who RSVPed "Maybe"
@@ -26,5 +28,6 @@ public class Event {
     private String imageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String type; // Type;{Private, Group, Public}
+    private String type;
+    private String duration;// Type;{Private, Group, Public}
 }
