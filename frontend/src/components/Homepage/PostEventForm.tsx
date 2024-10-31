@@ -10,7 +10,7 @@ const PostEventForm: React.FC = () => {
     const {user} = useUser();
     const [event, setEvent] = useState<Event>({
         id: '',
-        name: 'Divakar Event',
+        name: '',
         description: '',
         categoryId: '',
         organizerId: user?.id || "",
@@ -128,6 +128,20 @@ const PostEventForm: React.FC = () => {
                     onChange={handleChange}
                     placeholder="Enter Description"
                 />
+            </Form.Group>
+
+            {/* Event Type */}
+            <Form.Group controlId="eventType" className="mb-3">
+                <Form.Label>Event Type</Form.Label>
+                <Form.Select
+                    name="eventType"
+                    value={event.eventType}
+                    onChange={handleChange}
+                >
+                    <option>Public</option>
+                    <option>Private</option>
+                    <option>Group</option>
+                </Form.Select>
             </Form.Group>
 
             <Form.Group controlId="categoryId" className="mb-3">
@@ -291,19 +305,6 @@ const PostEventForm: React.FC = () => {
                 </Row>
             </Form.Group>
 
-            {/* Event Type */}
-            <Form.Group controlId="eventType" className="mb-3">
-                <Form.Label>Event Type</Form.Label>
-                <Form.Select
-                    name="eventType"
-                    value={event.eventType}
-                    onChange={handleChange}
-                >
-                    <option>Public</option>
-                    <option>Private</option>
-                </Form.Select>
-            </Form.Group>
-
             {/* Image URL */}
             <Form.Group controlId="uploadAttachments" className="mb-3">
                 <Form.Label>Upload Attachments (Images Only)</Form.Label>
@@ -341,11 +342,18 @@ const PostEventForm: React.FC = () => {
 
             {/* Upload Button */}
 
+            {/* Co-Hosts */}
+            <Form.Group controlId="attendees" className="mb-3">
+                <Form.Label>Co-Hosts :  </Form.Label>
+                <Button variant="outline-secondary" onClick={() => handleAddAttendee('attendees')}>
+                    Add Co-Host
+                </Button>
+            </Form.Group>
 
 
             {/* Attendees */}
             <Form.Group controlId="attendees" className="mb-3">
-                <Form.Label>Attendees</Form.Label>
+                <Form.Label>Attendees :  </Form.Label>
                 <Button variant="outline-secondary" onClick={() => handleAddAttendee('attendees')}>
                     Add Attendee
                 </Button>

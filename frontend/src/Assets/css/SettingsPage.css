@@ -1,6 +1,16 @@
 .settings-page {
     max-width: 800px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.user-details-section .profile-pic {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
 }
 
 .header-section .title {
@@ -32,6 +42,12 @@
 
 .danger-zone h5 {
     font-size: 18px;
+}
+
+.footer-section {
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .footer-section .btn {

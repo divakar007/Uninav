@@ -7,6 +7,8 @@ import HamburgerMenu from "./components/Homepage/HamburgerMenu";
 import PostEvent from "./components/Homepage/PostEvent";
 import SettingsPage from "./components/Homepage/SettingsPage";
 import Sidebar from "./components/Homepage/Sidebar";
+import EventsPage from "./components/Events/EventsPage";
+import Favorites from "./components/Homepage/Favorites";
 
 // Set the base URL for Axios
 
@@ -20,10 +22,12 @@ function App() {
                     <Route path="/" element={<MapComponent/>}/>
                     <Route path="/settings" element={<SettingsPage/>}></Route>
                     <Route path="/post" element={<PostEvent/>}/>
+                    <Route path="/events" element={<EventsPage/>}/>
+                    <Route path="/favorites" element={<Favorites/>}/>
                 </Routes>
             </div>
         </Router>
-);
+    );
 }
 
 export default App;

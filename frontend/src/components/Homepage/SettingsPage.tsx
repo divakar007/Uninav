@@ -1,22 +1,84 @@
-import React from 'react';
-import { Container, Row, Col, Form, Button} from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import './../../Assets/css/SettingsPage.css';
 
 const SettingsPage: React.FC = () => {
+    const [userDetails, setUserDetails] = useState({
+        username: '',
+        primaryEmail: '',
+        phoneNumber: '',
+        secondaryEmail: ''
+    });
+
+    useEffect(() => {
+        // Fetch user details from your existing user login implementation
+        const fetchUserDetails = async () => {
+            // Replace with actual API call or context/state retrieval
+            const user = {
+                username: 'JohnDoe', // Example username
+                primaryEmail: 'john.doe@example.com' // Example primary email
+            };
+            setUserDetails(prevDetails => ({
+                ...prevDetails,
+                username: user.username,
+                primaryEmail: user.primaryEmail
+            }));
+        };
+
+        fetchUserDetails();
+    }, []);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setUserDetails(prevDetails => ({
+            ...prevDetails,
+            [name]: value
+        }));
+    };
+
     return (
         <Container className="settings-page mt-4">
             {/* Header */}
             <div className="header-section">
-                <h2 className="title">Notification preferences</h2>
-                <p className="subtitle">
-                    We are here to bring you the latest update that enhances your experience and improves functionality.
-                </p>
-                <div className="alert alert-primary d-flex justify-content-between align-items-center">
-                    <span>You can now see all device notifications.</span>
-                    <Button variant="link" className="text-light">
-                        Undo
-                    </Button>
-                </div>
+                <h2 className="title">Settings</h2>
+            </div>
+
+            {/* User Details */}
+            <div className="user-details-section mb-4">
+                <h5 className="title">User Details</h5>
+                <Row className="align-items-center mb-3">
+                    <Col xs="auto">
+                        <img src="path/to/profile-pic.jpg" alt="Profile" className="profile-pic" />
+                    </Col>
+                    <Col>
+                        <p><strong>Username:</strong> {userDetails.username}</p>
+                        <p><strong>Primary Email:</strong> {userDetails.primaryEmail}</p>
+                    </Col>
+                </Row>
+                <Form>
+                    <Form.Group as={Row} className="mb-3">
+                        <Form.Label column sm="2">Phone Number</Form.Label>
+                        <Col sm="10">
+                            <Form.Control
+                                type="text"
+                                name="phoneNumber"
+                                value={userDetails.phoneNumber}
+                                onChange={handleInputChange}
+                            />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-3">
+                        <Form.Label column sm="2">Secondary Email</Form.Label>
+                        <Col sm="10">
+                            <Form.Control
+                                type="email"
+                                name="secondaryEmail"
+                                value={userDetails.secondaryEmail}
+                                onChange={handleInputChange}
+                            />
+                        </Col>
+                    </Form.Group>
+                </Form>
             </div>
 
             {/* Notifications */}
@@ -24,73 +86,39 @@ const SettingsPage: React.FC = () => {
                 <Row className="mb-3">
                     <Col><strong>Notifications</strong></Col>
                     <Col xs="auto"><strong>Email</strong></Col>
-                    <Col xs="auto"><strong>Push</strong></Col>
                 </Row>
 
                 <Row className="notification-item align-items-center">
-                    <Col>Your transfers and balances</Col>
+                    <Col>Alerts</Col>
                     <Col xs="auto">
-                        <Form.Check type="checkbox" defaultChecked />
-                    </Col>
-                    <Col xs="auto">
-                        <Form.Check type="checkbox" defaultChecked />
+                        <Form.Check type="switch" defaultChecked />
                     </Col>
                 </Row>
 
                 <Row className="notification-item align-items-center">
-                    <Col>Your debit card</Col>
+                    <Col>Events</Col>
                     <Col xs="auto">
-                        <Form.Check type="checkbox" />
-                    </Col>
-                    <Col xs="auto">
-                        <Form.Check type="checkbox" />
+                        <Form.Check type="switch" />
                     </Col>
                 </Row>
 
                 <Row className="notification-item align-items-center">
-                    <Col>Currencies and features</Col>
+                    <Col>Giveaways</Col>
                     <Col xs="auto">
-                        <Form.Check type="checkbox" />
-                    </Col>
-                    <Col xs="auto">
-                        <Form.Check type="checkbox" defaultChecked />
+                        <Form.Check type="switch" />
                     </Col>
                 </Row>
             </div>
 
-            {/* Admins */}
-            <div className="admins-section mt-4">
-                <h5>Admins</h5>
-                <Row className="admin-item align-items-center">
-                    <Col xs="auto">
-                        <img src="/path/to/admin-avatar.jpg" alt="Admin" className="admin-avatar" />
-                    </Col>
-                    <Col>
-                        <strong>Helena Rodriguez</strong>
-                        <p className="text-muted">Owner</p>
-                    </Col>
-                    <Col xs="auto">
-                        <Form.Select defaultValue="full">
-                            <option value="full">Full access</option>
-                            <option value="restricted">Restricted access</option>
-                        </Form.Select>
-                    </Col>
-                </Row>
-            </div>
-
-            {/* Danger Zone */}
+            {/* Authentication */}
             <div className="danger-zone mt-4">
-                <h5 className="text-danger">Danger zone</h5>
+                <h5 className="text-danger">Verify Yourself</h5>
                 <Row className="align-items-center">
-                    <Col xs="auto">
-                        {/* Add user avatars dynamically here */}
-                        <img src="/path/to/user-avatar.jpg" alt="User" className="user-avatar" />
-                    </Col>
                     <Col>
-                        <strong>Disable all notifications for all users in your workspace</strong>
+                        <strong>Verify Yourself in order to Post</strong>
                     </Col>
                     <Col xs="auto">
-                        <Form.Check type="switch" id="disable-all" />
+                        <Button variant="danger">Verify</Button>
                     </Col>
                 </Row>
             </div>

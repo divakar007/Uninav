@@ -3,10 +3,10 @@ import '../../Assets/css/HamburgerMenu.css';
 import { useState } from 'react';
 import halflogo from '../../Assets/images/uninav_halflogo1.png';
 import fulllogo from '../../Assets/images/uninav_fulllogo1.png';
-import {SignedIn, SignedOut, SignInButton, UserButton, useUser} from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import UserDataLogger from "../User/UserDataLogger";
 import Button from "react-bootstrap/Button";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const HamburgerMenu: React.FC = () => {
     const [isHovered, setIsHovered] = useState(false);
@@ -24,7 +24,6 @@ const HamburgerMenu: React.FC = () => {
     }, [isHovered]);
 
     return (
-
         <div
             className={`hamburger-menu ${isHovered ? 'expanded' : ''}`}
             onMouseEnter={() => setIsHovered(true)}
@@ -42,8 +41,10 @@ const HamburgerMenu: React.FC = () => {
                 {isHovered && <Link to={"/"}>Home</Link>}
             </div>
             <div className="menu-item">
-                <i className="icon">📊</i>
-                {isHovered && <Link to={"/events"}>Events</Link>}
+                <Link to="/events">
+                    <i className="icon">📊</i>
+                    {isHovered && <span>Events</span>}
+                </Link>
             </div>
             <div className="menu-item">
                 <i className="icon">🔔</i>
