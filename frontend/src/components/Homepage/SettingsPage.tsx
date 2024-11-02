@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import './../../Assets/css/SettingsPage.css';
+import { useUser } from "@clerk/clerk-react";
 
 const SettingsPage: React.FC = () => {
+    const { user } = useUser();
     const [userDetails, setUserDetails] = useState({
         username: '',
         primaryEmail: '',
         phoneNumber: '',
-        secondaryEmail: ''
+        secondaryEmail: '',
+        profileImage: ''
     });
 
     useEffect(() => {
-        // Fetch user details from your existing user login implementation
-        const fetchUserDetails = async () => {
-            // Replace with actual API call or context/state retrieval
-            const user = {
-                username: 'JohnDoe', // Example username
-                primaryEmail: 'john.doe@example.com' // Example primary email
-            };
-            setUserDetails(prevDetails => ({
-                ...prevDetails,
-                username: user.username,
-                primaryEmail: user.primaryEmail
-            }));
-        };
-
-        fetchUserDetails();
-    }, []);
+        if (user) {
+            setUserDetails({
+                username: user.fullName || 'User Name',
+                primaryEmail: user.primaryEmailAddress?.emailAddress || 'user@example.com',
+                phoneNumber: '',
+                secondaryEmail: '',
+                profileImage: user.imageUrl || 'https://via.placeholder.com/40'
+            });
+        }
+    }, [user]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -48,7 +45,7 @@ const SettingsPage: React.FC = () => {
                 <h5 className="title">User Details</h5>
                 <Row className="align-items-center mb-3">
                     <Col xs="auto">
-                        <img src="path/to/profile-pic.jpg" alt="Profile" className="profile-pic" />
+                        <img src={userDetails.profileImage} alt="Profile" className="profile-pic" />
                     </Col>
                     <Col>
                         <p><strong>Username:</strong> {userDetails.username}</p>

@@ -1,0 +1,80 @@
+.event-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    max-width: 300px;
+    margin: 16px;
+}
+
+.event-card:hover {
+    transform: scale(1.05);
+}
+
+.event-card-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.event-card-content {
+    padding: 16px;
+}
+
+.event-card-title {
+    font-size: 1.2em;
+    margin: 0 0 8px;
+}
+
+.event-card-description {
+    font-size: 0.9em;
+    color: #555;
+    margin: 0 0 16px;
+}
+
+.event-card-link {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.event-card-link:hover {
+    text-decoration: underline;
+}
+
+/* Options */
+.event-card-options {
+    position: relative;
+    display: inline-block;
+}
+
+.options-button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.options-dropdown {
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Ensure it appears above other elements */
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.options-dropdown button {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.options-dropdown button:hover {
+    background-color: #f1f1f1;
+}
+

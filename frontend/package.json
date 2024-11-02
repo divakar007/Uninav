@@ -4,6 +4,10 @@
   "private": true,
   "dependencies": {
     "@clerk/clerk-react": "^5.11.0",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.6",
+    "@mui/material": "^6.1.6",
     "@react-google-maps/api": "^2.20.3",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -53,8 +57,8 @@
   },
   "devDependencies": {
     "@types/bootstrap": "^5.2.10",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
     "react-app-rewired": "^2.2.1"
   }
 }

@@ -1,6 +1,6 @@
 // WeatherCard.tsx
 import React from 'react';
-import './CSS/WeatherCard.css';
+import '../../Assets/css/WeatherCard.css';
 
 interface WeatherCardProps {
     isWeatherPopupVisible: boolean;
@@ -24,7 +24,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({
             <button className="close-button" onClick={closeWeatherPopup}>
                 <i className="fas fa-times"></i>
             </button>
-            <h3 className="title">Weather Information</h3>
+            {/*<h5 className="title">Weather Information</h5>*/}
             {isLoadingWeather ? (
                 <p>Loading weather data...</p>
             ) : weatherError ? (
@@ -32,15 +32,24 @@ const WeatherCard: React.FC<WeatherCardProps> = ({
             ) : weatherData ? (
                 <div className="weather-card">
                     <div className="temperature">{weatherData.main.temp.toFixed(1)}°C</div>
+                    <div className="bottom-info">
+                        <div className="location">
+                            <i className="fas fa-map-marker-alt"></i> {weatherData.name}
+                        </div>
+                        <div className="weather">
+                            <div
+                                className="weather-description"
+                                style={{backgroundImage: `url(http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png)`}}
+                            >
+                                {weatherData.weather[0].description}
+                            </div>
+                        </div>
+                    </div>
                     <div className="details-grid">
                         <div className="details-item">Real Feel: {weatherData.main.feels_like.toFixed(1)}°C</div>
                         <div className="details-item">Pressure: {weatherData.main.pressure} hPa</div>
                         <div className="details-item">Wind Speed: {weatherData.wind.speed} m/s</div>
                         <div className="details-item">Humidity: {weatherData.main.humidity}%</div>
-                    </div>
-                    <div className="bottom-info">
-                        <div className="weather">{weatherData.weather[0].description}</div>
-                        <div className="location">{weatherData.name}</div>
                     </div>
                 </div>
             ) : (

@@ -8,7 +8,7 @@ import UserDataLogger from './User/UserDataLogger';
 import Button from 'react-bootstrap/Button';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'; // Import Marker
 import CurrentLocationButton from './Homepage/CurrentLocationButton';
-import {Modal} from "react-bootstrap";
+import WeatherCard from './Homepage/WeatherCard';
 
 const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
 const WEATHER_API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
@@ -103,7 +103,6 @@ const MapComponent: React.FC = () => {
         setWeatherData(null);
     };
 
-
     const containerStyle = {
         width: '100%',
         height: '100vh',
@@ -119,58 +118,41 @@ const MapComponent: React.FC = () => {
         <div className="map-wrapper">
             <div className="map-container">
                 {isLoaded &&
-                <LoadScript googleMapsApiKey={MAP_API_KEY || ''}>
-                    <GoogleMap
-                        mapContainerStyle={containerStyle}
-                        center={currentLocation || defaultCenter}
-                        zoom={10}
-                        onLoad={(map) => {
-                            mapRef.current = map;
-                        }}
-                        onClick={handleMapClick}
-                    >
-                        {currentLocation && !selectedLatLng &&(
-                            <Marker position={currentLocation}/>
-                        )}
+                    <LoadScript googleMapsApiKey={MAP_API_KEY || ''}>
+                        <GoogleMap
+                            mapContainerStyle={containerStyle}
+                            center={currentLocation || defaultCenter}
+                            zoom={10}
+                            onLoad={(map) => {
+                                mapRef.current = map;
+                            }}
+                            onClick={handleMapClick}
+                        >
+                            {currentLocation && !selectedLatLng &&(
+                                <Marker position={currentLocation}/>
+                            )}
 
-                        {selectedLatLng && (
-                            <Marker position={selectedLatLng}/>
-                        )}
-                        <div className="current-location" style={{margin: '0 10px 10px 0'}}>
-                            <CurrentLocationButton onClick={handleCurrentLocation}/>
-                        </div>
+                            {selectedLatLng && (
+                                <Marker position={selectedLatLng}/>
+                            )}
+                            <div className="current-location" style={{margin: '0 10px 10px 0'}}>
+                                <CurrentLocationButton onClick={handleCurrentLocation}/>
+                            </div>
 
-                        <div className="tabs-container"><Tabs/></div>
-                        <div className="post-button-container"><PostButton/></div>
+                            <div className="tabs-container"><Tabs/></div>
+                            <div className="post-button-container"><PostButton/></div>
 
-
-                        <Modal show={isWeatherPopupVisible} onHide={handleCloseWeatherPopup} >
-                            <Modal.Header closeButton>
-                                <Modal.Title>Weather Information</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                {isLoadingWeather ? (
-                                    <p>Loading weather data...</p>
-                                ) : weatherError ? (
-                                    <p>{weatherError}</p>
-                                ) : weatherData ? (
-                                    <div>
-                                        <h5>{weatherData.name}</h5>
-                                        <p>Temperature: {weatherData.main.temp} °C</p>
-                                        <p>Weather: {weatherData.weather[0].description}</p>
-                                        <p>Humidity: {weatherData.main.humidity}%</p>
-                                        <p>Wind Speed: {weatherData.wind.speed} m/s</p>
-                                    </div>
-                                ) : null}
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={handleCloseWeatherPopup}>
-                                    Close
-                                </Button>
-                            </Modal.Footer>
-                        </Modal>
-                    </GoogleMap>
-                </LoadScript>
+                            {isWeatherPopupVisible && (
+                                <WeatherCard
+                                    isWeatherPopupVisible={isWeatherPopupVisible}
+                                    isLoadingWeather={isLoadingWeather}
+                                    weatherError={weatherError}
+                                    weatherData={weatherData}
+                                    closeWeatherPopup={handleCloseWeatherPopup}
+                                />
+                            )}
+                        </GoogleMap>
+                    </LoadScript>
                 }
             </div>
         </div>
