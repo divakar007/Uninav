@@ -1,4 +1,5 @@
 package com.uninav.backend.service;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,10 @@ public class S3Service {
     @Autowired
     private S3Client s3Client;
 
-    @Value("${aws.s3Bucket}")
-    private String bucketName;
-
     public String uploadFile(MultipartFile file) {
         try {
+            Dotenv dotenv = Dotenv.configure().directory("./backend/.env").load();
+            String bucketName = dotenv.get("AWS_S3_BUCKET");
             File convertedFile = convertMultiPartToFile(file);
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 

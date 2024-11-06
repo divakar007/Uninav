@@ -1,6 +1,9 @@
 package com.uninav.backend;
 
+import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -11,21 +14,20 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class S3Config {
-    @Value("${aws.accessKeyId}")
-    private String accessKeyId;
-
-    @Value("${aws.secretAccessKey}")
-    private String secretAccessKey;
-
-    @Value("${aws.region}")
-    private String region;
 
     @Bean
     public S3Client s3Client() {
 
-
+        Dotenv dotenv = Dotenv.configure()
+                .directory("./backend/.env")
+                .filename(".env") // Specify the filename if different
+                .load();
+        String accessKeyId = dotenv.get("AWS_ACCESS_KEY_ID");
+        String secretAccessKey = dotenv.get("AWS_SECRET_ACCESS_KEY");
+        String region = dotenv.get("AWS_REGION");
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
 
+        assert region != null;
         return S3Client.builder()
                 .region(Region.of(region))
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
