@@ -5,6 +5,7 @@ import com.uninav.backend.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -30,5 +31,10 @@ public class CategoryService {
 
     public void deleteCategory(String categoryId) {
         categoryRepository.deleteById(categoryId);
+    }
+
+    public boolean isCategoryNameExists(String name) {
+        Optional<Category> category = Optional.ofNullable(categoryRepository.findByName(name));
+        return category.isPresent();
     }
 }

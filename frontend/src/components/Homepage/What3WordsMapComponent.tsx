@@ -13,13 +13,16 @@ const What3WordsMapComponent: React.FC = () => {
     const handleSquareSelect = async (event: any) => {
         const { lat, lng } = event.detail.coordinates;
         setSelectedLatLng({lat,lng});
-        setSelectedW3words(inputValue);
+        setSelectedW3words(event.detail.words);
+        setInputValue(event.detail.words);
+
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
         setInputValue(value);
         setSelectedW3words(value);
+        console.log(value);
     };
 
     useEffect(() => {
@@ -56,9 +59,9 @@ const What3WordsMapComponent: React.FC = () => {
                         <input
                             type="text"
                             placeholder="Find your address"
-                            value={inputValue} // Set the input value
-                            onChange={handleInputChange} // Handle input change
-                            style={{ width: "300px" }}
+                            value={inputValue}
+                            onChange={handleInputChange}
+                            style={{ width: "250px" }}
                             autoComplete="off"
                         />
                     </What3wordsAutosuggest>

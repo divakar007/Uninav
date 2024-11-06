@@ -16,7 +16,6 @@ public class User {
     private String name;
     private String email;
     private String profileImage;
-    private List<String> favorites; // List of favorite categories
     private String role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -24,16 +23,15 @@ public class User {
     private boolean verified;
 
 
-    public User(String id, String name, String email, String profileImage, List<String> favorites, String role, LocalDateTime createdAt, LocalDateTime updatedAt, String phoneNumber, boolean verified) {
+    public User(String id, String name, String email, String profileImage, String role, LocalDateTime createdAt, LocalDateTime updatedAt, String phoneNumber, boolean verified) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.profileImage = profileImage;
-        this.favorites = favorites;
         this.role = role;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.phoneNumber = phoneNumber;
-        this.verified = false;
+        this.verified = verified;
     }
 }

@@ -46,6 +46,7 @@ dependencies {
 	// Spring AI Elasticsearch (if needed for AI use cases)
 	implementation 'org.springframework.ai:spring-ai-elasticsearch-store-spring-boot-starter'
 
+	implementation 'software.amazon.awssdk:s3:2.20.20'
 	// Lombok for reducing boilerplate code
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

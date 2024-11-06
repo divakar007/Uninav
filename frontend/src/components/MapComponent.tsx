@@ -3,12 +3,10 @@ import './../Assets/css/MapComponent.css';
 import Tabs from './Homepage/Tabs';
 import PostButton from './Homepage/PostButton';
 import axios from 'axios';
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
-import UserDataLogger from './User/UserDataLogger';
-import Button from 'react-bootstrap/Button';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'; // Import Marker
 import CurrentLocationButton from './Homepage/CurrentLocationButton';
 import WeatherCard from './Homepage/WeatherCard';
+import EventMarkers from './Events/EventMarkers';
 
 const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
 const WEATHER_API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
@@ -135,6 +133,8 @@ const MapComponent: React.FC = () => {
                             {selectedLatLng && (
                                 <Marker position={selectedLatLng}/>
                             )}
+
+                            <EventMarkers/>
                             <div className="current-location" style={{margin: '0 10px 10px 0'}}>
                                 <CurrentLocationButton onClick={handleCurrentLocation}/>
                             </div>

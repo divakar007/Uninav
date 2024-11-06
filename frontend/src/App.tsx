@@ -3,12 +3,13 @@ import './App.css';
 import MapComponent from "./components/MapComponent";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import axios from "axios";
-import HamburgerMenu from "./components/Homepage/HamburgerMenu";
 import PostEvent from "./components/Homepage/PostEvent";
 import SettingsPage from "./components/Homepage/SettingsPage";
 import Sidebar from "./components/Homepage/Sidebar";
 import EventsPage from "./components/Events/EventsPage";
 import Favorites from "./components/Homepage/Favorites";
+import AdminPage from "./components/Admin/adminPage";
+import EventDetailsPage from "./components/Events/EventDetailsPage";
 
 // Set the base URL for Axios
 
@@ -24,6 +25,8 @@ function App() {
                     <Route path="/post" element={<PostEvent/>}/>
                     <Route path="/events" element={<EventsPage/>}/>
                     <Route path="/favorites" element={<Favorites/>}/>
+                    <Route path="/adminpage" element={<AdminPage/>}/>
+                    <Route path={"/events/:paramName"} element={<EventDetailsPage/>}/>
                 </Routes>
             </div>
         </Router>

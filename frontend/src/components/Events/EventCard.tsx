@@ -53,7 +53,7 @@ const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl }
             <div className="event-card-content">
                 <h3 className="event-card-title">{name}</h3>
                 <p className="event-card-description">{description}</p>
-                <Link to={`/event/${id}`} className="event-card-link">View Full Post</Link>
+                <Link to={`/events/${id}`} className="event-card-link">View Full Post</Link>
                 <div className="event-card-options">
                     <button ref={buttonRef} onClick={toggleOptions} className="options-button">⋮</button>
                     {showOptions && ReactDOM.createPortal(renderDropdown(), document.body)}

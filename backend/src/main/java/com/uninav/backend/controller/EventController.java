@@ -15,15 +15,19 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/events")
+@RequestMapping("/api/event")
 public class EventController {
 
     @Autowired
     private EventService eventService;
 
     @GetMapping("/get-all-events")
-    public List<Event> getAllEvents() {
-        return eventService.getAllEvents();
+    public ResponseEntity<List<Event>> getAllEvents() {
+        try{
+            return new ResponseEntity<>(eventService.getAllEvents(), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
@@ -70,11 +74,11 @@ public class EventController {
         }
     }
 
-    @GetMapping("/add-event")
-    public ResponseEntity<Map<String, Object>> addEvent(@RequestBody Map<String, Object> eventData) {
+    @PostMapping("/create-event")
+    public ResponseEntity<Map<String, Object>> addEvent(@RequestBody Event eventData) {
         try {
 
-            eventService.createEvent((Event) eventData);
+            eventService.createEvent(eventData);
             Map<String, Object> response = new HashMap<>();
             response.put("status", "success");
             return ResponseEntity.status(HttpStatus.OK).body(response);

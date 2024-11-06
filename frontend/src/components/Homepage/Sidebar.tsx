@@ -2,7 +2,7 @@ import React from 'react';
 import './../../Assets/css/Sidebar.css';
 import halflogo from '../../Assets/images/uninav_halflogo1.png';
 import fulllogo from '../../Assets/images/uninav_fulllogo1.png';
-import { FaHome, FaBell, FaChartBar, FaFolder, FaCalendar, FaUser, FaCog, FaHeart } from 'react-icons/fa';
+import {FaHome, FaBell, FaChartBar, FaFolder, FaCalendar, FaUser, FaCog, FaHeart, FaAd} from 'react-icons/fa';
 import { Link } from "react-router-dom";
 import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import UserDataLogger from "../User/UserDataLogger";
@@ -58,12 +58,19 @@ const Sidebar: React.FC = () => {
                     <FaCog className="nav-icon" />
                     <span className="nav-label">Settings</span>
                 </Link>
+                { user && user.primaryEmailAddress && "adivakararao@vt.edu" === user.primaryEmailAddress.toString()  && (
+                    <Link to="/adminpage" className="nav-item">
+                        <FaAd className="nav-icon" />
+                        <span className="nav-label">Admin</span>
+                    </Link>
+                )
+                }
             </ul>
 
             <div className="profile-section">
                 <SignedIn>
                     <UserButton
-                        afterSignOutUrl="/Uninav"
+                        afterSignOutUrl="/"
                         appearance={{
                             elements: {
                                 avatarBox: 'profile-img',

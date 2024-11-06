@@ -11,7 +11,6 @@ export type Address = {
 
 // Define Event type
 export type Event = {
-    time: string | number ;
     id: string;
     name: string;
     description: string;
@@ -20,7 +19,7 @@ export type Event = {
     what3wordsAddress?: string; // Optional What3Words address
     latitude: number;
     longitude: number;
-    address?: Address; // Optional address object
+    address: Address;
     date: string; // ISO date string
     attendees: string[]; // List of user IDs or names
     maybeAttendees: string[]; // List of user IDs or names

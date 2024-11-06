@@ -1,33 +1,45 @@
-import React, {useEffect, useState} from 'react';
-import { Form, Button, Row, Col, InputGroup, ProgressBar } from 'react-bootstrap';
-import { Event } from '../types/Event';
-import { FaCalendarAlt, FaClock } from 'react-icons/fa';
+import React, {useContext, useEffect, useState} from 'react';
+import {Button, Col, Form, InputGroup, ProgressBar, Row} from 'react-bootstrap';
+import {Event} from '../types/Event';
+import {FaCalendarAlt, FaClock} from 'react-icons/fa';
 import './../../Assets/css/PostEventForm.css';
-import axios from "axios";
-import {useUser} from "@clerk/clerk-react";
+import axios from 'axios';
+import {useUser} from '@clerk/clerk-react';
+import {useWhat3Words} from '../context/What3WordsContext';
+import {CategoryContext} from "../context/CategoryContext";
+import {CategoryItem} from "../types/CategoryItem";
+import successModel from "../Models/SuccessModel";
+import SuccessModel from "../Models/SuccessModel";
 
 const PostEventForm: React.FC = () => {
-    const {user} = useUser();
+    const { user } = useUser();
+    const { selectedW3words, selectedLatLng } = useWhat3Words();
+    const categories = useContext<CategoryItem[]>(CategoryContext);
+    const [date, setDate] = useState<string>('');  // Format: YYYY-MM-DD
+    const [time, setTime] = useState<string>('');  // Format: HH:mm
+    const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
+    const [showModel, setShowModel] = useState<boolean>(false);
+    const [modelMessage, setModelMessage] = useState<string>("");
+    const [address, setAddress] = useState({
+        street: '',
+        apartmentNumber: '',
+        city: '',
+        state: '',
+        zip: '',
+        country: '',
+        phone: ''
+    });
     const [event, setEvent] = useState<Event>({
         id: '',
         name: '',
         description: '',
         categoryId: '',
-        organizerId: user?.id || "",
-        what3wordsAddress: '',
+        organizerId: user?.id || '',
+        what3wordsAddress: selectedW3words?.valueOf(),
         latitude: 0,
         longitude: 0,
-        address: {
-            street: '',
-            apartmentNumber: '',
-            city: '',
-            state: '',
-            zip: '',
-            country: '',
-            phone: '',
-        },
+        address: address,
         date: '',
-        time: '',
         attendees: [],
         maybeAttendees: [],
         declinedAttendees: [],
@@ -35,41 +47,105 @@ const PostEventForm: React.FC = () => {
         imageUrl: '',
         createdAt: '',
         updatedAt: '',
-        eventType: 'Public',
+        eventType: 'Public'
     });
 
     const [files, setFiles] = useState<File[]>([]);
-    const [uploadProgress, setUploadProgress] = useState<number>(0); // Track upload progress
-    // Add more input fields
+    const [newAttendee, setNewAttendee] = useState<string>('');
+
+
     useEffect(() => {
         if (user?.id != null) {
-            event.organizerId = user?.id;
-        } // Trigger re-render to ensure the map loads
-    }, []);
-    const handleAddAttendee = (type: string) => {
-        // Add logic to add attendees, maybe attendees, or declined attendees
+            setEvent((prevEvent) => ({
+                ...prevEvent,
+                organizerId: user.id,
+            }));
+        }
+    }, [user]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setEvent((prevEvent) => ({
+            ...prevEvent,
+            [name]: value,
+        }));
+    };
+
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name , value} = e.target;
+        setDate(value);
+    }
+
+    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = e.target
+        setTime(value);
+    }
+
+
+    const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setEvent((prevEvent) => ({
+            ...prevEvent,
+            address: {
+                ...prevEvent.address,
+                [name]: value,
+            },
+        }));
+    };
+
+    useEffect(() => {
+        if (selectedLatLng && window.google) {
+            const geocoder = new window.google.maps.Geocoder();
+            const latLng = new window.google.maps.LatLng(
+                selectedLatLng.lat,
+                selectedLatLng.lng
+            );
+            console.log(latLng.lat(), latLng.lng());
+            geocoder.geocode({ location: latLng }, (results, status) => {
+                if (status === 'OK' && results && results.length > 0) {
+                    console.log("inside the geocode");
+                    const addressComponents = results[0].address_components;
+                    const formattedAddress = {
+                        street: extractComponent(addressComponents, 'route') || '',
+                        city: extractComponent(addressComponents, 'locality') || '',
+                        state: extractComponent(addressComponents, 'administrative_area_level_1') || '',
+                        zip: extractComponent(addressComponents, 'postal_code') || '',
+                        country: extractComponent(addressComponents, 'country') || '',
+                    };
+
+                    // Check if the values are updating properly and re-run the state setter
+                    setEvent((event) => ({
+                        ...event,
+                        address: {
+                            ...event.address,
+                            street: formattedAddress.street,
+                            city: formattedAddress.city,
+                            state: formattedAddress.state,
+                            zip: formattedAddress.zip,
+                            country: formattedAddress.country,
+                        },
+                        latitude: selectedLatLng.lat,
+                        longitude: selectedLatLng.lng,
+                    }));
+                    console.log(formattedAddress);
+                } else {
+                    console.error('Geocoder failed due to:', status);
+                }
+            });
+        }
+    }, [selectedLatLng]);
+
+    const extractComponent = (components: any[], type: string) => {
+        const component = components.find((comp) => comp.types.includes(type));
+        return component ? component.long_name : '';
     };
 
 
-    function handleSubmit() {
-
-    }
-
-    function handleChange() {
-
-    }
-
-    function handleAddressChange() {
-
-    }
-
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            // Filter only image files
             const selectedFiles = Array.from(e.target.files).filter(file =>
                 file.type.startsWith('image/')
             );
-            // Update state with selected image files
             setFiles(selectedFiles);
         }
     };
@@ -78,36 +154,111 @@ const PostEventForm: React.FC = () => {
         if (files.length === 0) return;
 
         const formData = new FormData();
-        files.forEach(file => formData.append('files', file));
+        files.forEach(file => formData.append('file', file));
 
         try {
-            await axios.post('/upload', formData, {
+            const response = await axios.post('/s3/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
-                onUploadProgress: (progressEvent) => {
-                    const total = progressEvent.total || 1; // Default to 1 to avoid division by zero
-                    const progress = Math.round((progressEvent.loaded * 100) / total);
-                    setUploadProgress(progress); // Update progress bar
-                },
             });
-            alert('Upload successful!');
+            event.imageUrl = response.data.fileUrl;
         } catch (error) {
             console.error('Upload failed:', error);
-            alert('Upload failed. Please try again.');
         }
     };
 
-    function handleSelectLocation() {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        event.date = `${date}T${time}:00`;
+        try {
+            const response = await axios.post('/event/create-event', event, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (response.data.status === "success"){
+                setIsFormSubmitted(true);
+                setShowModel(true);
+                setModelMessage("Event is successfully created!");
+            }
+            console.log('Server response:', response.data);
+        } catch (error) {
+            console.error('Error submitting DateTime:', error);
+            setIsFormSubmitted(true);
+            setShowModel(true);
+            setModelMessage("Failed to create Event.");
+        }
+    };
 
+    const handleAddAttendee = () => {
+        if (newAttendee.trim() !== '' && !event.attendees.includes(newAttendee)) {
+            setEvent({
+                ...event,
+                attendees: [...event.attendees, newAttendee.trim()],
+            });
+            setNewAttendee('');
+        }
+    };
+
+    const handleRemoveAttendee = (attendee: string) => {
+        setEvent({
+            ...event,
+            attendees: event.attendees.filter(a => a !== attendee),
+        });
+    };
+
+    function handleCancel() {
+        setEvent({
+            id: '',
+            name: '',
+            description: '',
+            categoryId: '',
+            organizerId: user?.id || '',
+            what3wordsAddress: selectedW3words?.valueOf(),
+            latitude: 0,
+            longitude: 0,
+            address: address,
+            date: '',
+            attendees: [],
+            maybeAttendees: [],
+            declinedAttendees: [],
+            duration: '',
+            imageUrl: '',
+            createdAt: '',
+            updatedAt: '',
+            eventType: 'Public'
+        })
+    }
+
+    function handleOnClose() {
+        setShowModel(false);
+        setEvent({
+            id: '',
+            name: '',
+            description: '',
+            categoryId: '',
+            organizerId: user?.id || '',
+            what3wordsAddress: selectedW3words?.valueOf(),
+            latitude: 0,
+            longitude: 0,
+            address: address,
+            date: '',
+            attendees: [],
+            maybeAttendees: [],
+            declinedAttendees: [],
+            duration: '',
+            imageUrl: '',
+            createdAt: '',
+            updatedAt: '',
+            eventType: 'Public'
+        })
     }
 
     return (
-        <Form onSubmit={handleSubmit} className="post-event-form">
-            {/* Existing Fields */}
+    <Form onSubmit={handleSubmit} className="post-event-form">
             <h3 className="mb-4">Create Event</h3>
 
-            {/* Category and Organizer */}
             <Form.Group controlId="name" className="mb-3">
                 <Form.Label>Event Name</Form.Label>
                 <Form.Control
@@ -122,7 +273,7 @@ const PostEventForm: React.FC = () => {
             <Form.Group controlId="description" className="mb-3">
                 <Form.Label>Event Description</Form.Label>
                 <Form.Control
-                    type="text area"
+                    as="textarea"
                     name="description"
                     value={event.description}
                     onChange={handleChange}
@@ -130,7 +281,6 @@ const PostEventForm: React.FC = () => {
                 />
             </Form.Group>
 
-            {/* Event Type */}
             <Form.Group controlId="eventType" className="mb-3">
                 <Form.Label>Event Type</Form.Label>
                 <Form.Select
@@ -138,9 +288,9 @@ const PostEventForm: React.FC = () => {
                     value={event.eventType}
                     onChange={handleChange}
                 >
-                    <option>Public</option>
-                    <option>Private</option>
-                    <option>Group</option>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                    <option value="Group">Group</option>
                 </Form.Select>
             </Form.Group>
 
@@ -152,22 +302,22 @@ const PostEventForm: React.FC = () => {
                     onChange={handleChange}
                 >
                     <option>Select Category</option>
-                    <option value="1">Conference</option>
-                    <option value="2">Workshop</option>
-                    <option value="3">Social</option>
+                    {categories.map(category =>
+                        <option key={category.id} value={category.id}>{category.name}</option>
+                    )}
                 </Form.Select>
             </Form.Group>
+
             <Form.Group controlId="organizerId" className="mb-3">
                 <Form.Label>Organizer</Form.Label>
                 <Form.Control
                     type="text"
                     name="organizerId"
-                    value={user?.firstName +" "+  user?.lastName|| ""}
+                    value={user?.firstName + ' ' + user?.lastName || ''}
                     disabled={true}
                 />
             </Form.Group>
 
-            {/* Date, Time, and Duration */}
             <Row className="mb-3">
                 <Col md={4}>
                     <Form.Group controlId="eventDate">
@@ -176,8 +326,8 @@ const PostEventForm: React.FC = () => {
                             <Form.Control
                                 type="date"
                                 name="date"
-                                value={event.date}
-                                onChange={handleChange}
+                                value={date}
+                                onChange={handleDateChange}
                                 required
                             />
                             <InputGroup.Text>
@@ -193,8 +343,8 @@ const PostEventForm: React.FC = () => {
                             <Form.Control
                                 type="time"
                                 name="time"
-                                value={event.time}
-                                onChange={handleChange}
+                                value={time}
+                                onChange={handleTimeChange}
                                 required
                             />
                             <InputGroup.Text>
@@ -217,21 +367,20 @@ const PostEventForm: React.FC = () => {
                 </Col>
             </Row>
 
-            {/* Location */}
             <Form.Group controlId="what3wordsAddress" className="mb-3">
                 <Form.Label>Location</Form.Label>
                 <InputGroup>
                     <Form.Control
                         type="text"
                         name="location"
-                        value={event.what3wordsAddress}
+                        value={selectedW3words || event.what3wordsAddress}
                         onChange={handleChange}
                         placeholder="Choose Location"
+                        disabled={true}
                     />
-                    <Button variant="outline-secondary" onClick={handleSelectLocation}>Select Location</Button>
                 </InputGroup>
             </Form.Group>
-            {/* Address Inputs */}
+
             <Form.Group controlId="address" className="mb-3">
                 <Form.Label>Address</Form.Label>
                 <Row>
@@ -239,7 +388,7 @@ const PostEventForm: React.FC = () => {
                         <Form.Control
                             type="text"
                             name="street"
-                            value={event.address?.street}
+                            value={event.address.street}
                             onChange={handleAddressChange}
                             placeholder="Street"
                         />
@@ -248,7 +397,7 @@ const PostEventForm: React.FC = () => {
                         <Form.Control
                             type="text"
                             name="apartmentNumber"
-                            value={event.address?.apartmentNumber}
+                            value={event.address.apartmentNumber}
                             onChange={handleAddressChange}
                             placeholder="Apartment Number"
                         />
@@ -259,7 +408,7 @@ const PostEventForm: React.FC = () => {
                         <Form.Control
                             type="text"
                             name="city"
-                            value={event.address?.city}
+                            value={event.address.city}
                             onChange={handleAddressChange}
                             placeholder="City"
                         />
@@ -268,7 +417,7 @@ const PostEventForm: React.FC = () => {
                         <Form.Control
                             type="text"
                             name="state"
-                            value={event.address?.state}
+                            value={event.address.state}
                             onChange={handleAddressChange}
                             placeholder="State"
                         />
@@ -277,7 +426,7 @@ const PostEventForm: React.FC = () => {
                         <Form.Control
                             type="text"
                             name="zip"
-                            value={event.address?.zip}
+                            value={event.address.zip}
                             onChange={handleAddressChange}
                             placeholder="ZIP Code"
                         />
@@ -288,7 +437,7 @@ const PostEventForm: React.FC = () => {
                         <Form.Control
                             type="text"
                             name="country"
-                            value={event.address?.country}
+                            value={event.address.country}
                             onChange={handleAddressChange}
                             placeholder="Country"
                         />
@@ -297,7 +446,7 @@ const PostEventForm: React.FC = () => {
                         <Form.Control
                             type="text"
                             name="phone"
-                            value={event.address?.phone}
+                            value={event.address.phone}
                             onChange={handleAddressChange}
                             placeholder="Phone"
                         />
@@ -305,12 +454,11 @@ const PostEventForm: React.FC = () => {
                 </Row>
             </Form.Group>
 
-            {/* Image URL */}
             <Form.Group controlId="uploadAttachments" className="mb-3">
                 <Form.Label>Upload Attachments (Images Only)</Form.Label>
                 <Form.Control
                     type="file"
-                    accept="image/*" // Restrict to images only
+                    accept="image/*"
                     multiple
                     onChange={handleFileChange}
                 />
@@ -320,55 +468,54 @@ const PostEventForm: React.FC = () => {
                         {files.map((file, index) => (
                             <div className="attachment-item" key={index}>
                                 <span className="attachment-name">{file.name}</span>
-                                <span className="attachment-size">{(file.size / (1024 * 1024)).toFixed(1)}MB</span>
+                                {/*<span className="attachment-size">{(file.size / (1024 * 1024)).toFixed(1)}MB</span>*/}
                             </div>
                         ))}
-
-                        {/* Progress bar */}
-                        <ProgressBar now={uploadProgress} label={`${uploadProgress}%`} />
-
-                        {/* Upload time estimate */}
-                        <span className="upload-time">{uploadProgress}%</span>
                     </div>
                 )}
 
-                <Button className={"custom-button"} onClick={handleUpload} disabled={files.length === 0}>
+                <Button variant={"success"} onClick={handleUpload} disabled={files.length === 0}>
                     Upload Files
                 </Button>
             </Form.Group>
 
-            {/* Display file list and progress bar */}
-
-
-            {/* Upload Button */}
-
-            {/* Co-Hosts */}
-            <Form.Group controlId="attendees" className="mb-3">
-                <Form.Label>Co-Hosts :  </Form.Label>
-                <Button variant="outline-secondary" onClick={() => handleAddAttendee('attendees')}>
-                    Add Co-Host
-                </Button>
-            </Form.Group>
-
-
-            {/* Attendees */}
-            <Form.Group controlId="attendees" className="mb-3">
-                <Form.Label>Attendees :  </Form.Label>
-                <Button variant="outline-secondary" onClick={() => handleAddAttendee('attendees')}>
+            <Form.Group controlId="attendees" className="mb-3" hidden={!(event.eventType === 'Group')}>
+                <Form.Label>Attendees</Form.Label>
+                <Form.Control
+                    type="email"
+                    placeholder="Enter attendee email"
+                    value={newAttendee}
+                    onChange={(e) => setNewAttendee(e.target.value)}
+                />
+                <Button variant="success" className="mt-2" onClick={handleAddAttendee}>
                     Add Attendee
                 </Button>
+                <div className="mt-3">
+                    {event.attendees.length > 0 && (
+                        <ul className="list-group">
+                            {event.attendees.map((attendee, index) => (
+                                <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                                    {attendee}
+                                    <Button variant="danger" size="sm" onClick={() => handleRemoveAttendee(attendee)}>
+                                        Remove
+                                    </Button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
             </Form.Group>
 
-            {/* Submit and Cancel Buttons */}
             <div className="form-actions mt-4">
-                <Button variant="outline-secondary" className="me-2">
+                <Button variant="outline-secondary" className="me-2" onClick={handleCancel}>
                     Cancel
                 </Button>
-                <Button className={"custom-button"} type="submit">
+                <Button className="custom-button" type="submit" >
                     Create Event
                 </Button>
             </div>
-        </Form>
+        {isFormSubmitted && <SuccessModel show={showModel} message={modelMessage} onClose={handleOnClose}/>}
+    </Form>
     );
 };
 
