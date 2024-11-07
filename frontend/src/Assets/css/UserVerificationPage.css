@@ -22,9 +22,3 @@
     overflow-y: auto;
 }
 
-.verify-left {
-    background-image: url("../images/verify-bg.jpg");
-    /*background-size: cover; !* Ensures the image covers the entire element *!*/
-    /*background-repeat: no-repeat; !* Prevents the image from repeating *!*/
-    /*background-position: center; !* Centers the image *!*/
-}
