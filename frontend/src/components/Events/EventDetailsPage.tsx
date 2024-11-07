@@ -1,80 +1,54 @@
-import React, {useContext, useState} from 'react';
-import { Button, Container, Card, ListGroup } from 'react-bootstrap';
-import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaThumbsUp, FaCheck, FaTimes, FaQuestion } from 'react-icons/fa';
-import {useParams} from "react-router-dom";
-import {EventContext} from "../context/EventContext";
-import "../../Assets/css/EventDetailsPage.css"
-
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import '../../Assets/css/EventDetailsPage.css';
 
 const EventDetailsPage: React.FC = () => {
-    const [likeCount, setLikeCount] = useState<number>(0);
-    const [rsvpStatus, setRsvpStatus] = useState<'yes' | 'no' | 'maybe' | ''>('');
-    const events = useContext(EventContext);
-    const { paramName } = useParams<{ paramName: string }>();
-    const event = events.find(e=> e.id === paramName)
-    console.log(event);
-    const handleLike = () => {
-        setLikeCount(likeCount + 1);
-    };
+    const { id } = useParams<{ id: string }>();
 
-    const handleRSVP = (status: 'yes' | 'no' | 'maybe') => {
-        setRsvpStatus(status);
+    const event = {
+        // Sample data
+        id: '1',
+        name: 'Event 1',
+        description: 'Full description of the event.',
+        eventType: 'Public',
+        category: 'Conference',
+        organizer: 'John Doe',
+        date: '2023-10-01',
+        time: '10:00 AM',
+        duration: '3h',
+        w3wLocation: 'word.word.word',
+        address: {
+            street: '123 Main St',
+            apartmentNumber: '4B',
+            city: 'New York',
+            state: 'NY',
+            zip: '10001',
+            country: 'USA',
+            phone: '123-456-7890',
+        },
+        imageUrl: 'https://via.placeholder.com/300',
+        coHosts: ['Jane Doe', 'Alice Smith'],
     };
 
     return (
-
-        <div className={"container event-details-container"}>
-        <Container className="my-5">
-            {event &&
-            <Card className="mb-4 shadow-sm">
-                <Card.Img variant="top" className={"event-details-image"} src={event.imageUrl || 'https://via.placeholder.com/800x400'}/>
-                <Card.Body>
-                    <h3>{event.name}</h3>
-                    <p>{event.description}</p>
-                    <div className="mb-3">
-                        <p><FaCalendarAlt/> <strong>Date:</strong> {event.date}</p>
-                        <p><FaClock/> <strong>Duration:</strong> {event.duration}</p>
-                        <p><FaMapMarkerAlt/>
-                            <strong>Location:</strong> {`${event.address.street}, ${event.address.city}, ${event.address.state}, ${event.address.zip}, ${event.address.country}`}
-                        </p>
-                        {event.what3wordsAddress && (
-                            <p><strong>What3Words:</strong> {event.what3wordsAddress}</p>
-                        )}
-                        <p><strong>Organizer ID:</strong> {event.organizerId}</p>
-                    </div>
-                    <Button variant="outline-primary" className="me-2" onClick={() => handleRSVP('yes')}>
-                        <FaCheck/> Yes
-                    </Button>
-                    <Button variant="outline-secondary" className="me-2" onClick={() => handleRSVP('maybe')}>
-                        <FaQuestion/> Maybe
-                    </Button>
-                    <Button variant="outline-danger" onClick={() => handleRSVP('no')}>
-                        <FaTimes/> No
-                    </Button>
-                    <div className="mt-3">
-                        <Button variant="outline-success" onClick={handleLike}>
-                            <FaThumbsUp/> Like {likeCount > 0 && `(${likeCount})`}
-                        </Button>
-                    </div>
-                    {rsvpStatus && (
-                        <div className="mt-3">
-                            <h5>Your RSVP: <span
-                                className={`text-${rsvpStatus === 'yes' ? 'success' : rsvpStatus === 'no' ? 'danger' : 'warning'}`}>{rsvpStatus.toUpperCase()}</span>
-                            </h5>
-                        </div>
-                    )}
-                </Card.Body>
-            </Card>
-            }
-            <ListGroup className="mb-4">
-                <ListGroup.Item><strong>Attendees:</strong> {event?.attendees.join(', ') || 'No attendees yet'}
-                </ListGroup.Item>
-                <ListGroup.Item><strong>Maybe Attendees:</strong> {event?.maybeAttendees.join(', ') || 'None'}
-                </ListGroup.Item>
-                <ListGroup.Item><strong>Declined Attendees:</strong> {event?.declinedAttendees.join(', ') || 'None'}
-                </ListGroup.Item>
-            </ListGroup>
-        </Container>
+        <div className="event-details-page">
+            <img src={event.imageUrl} alt={event.name} className="event-details-image" />
+            <div className="event-details-content">
+                <h1 className="event-details-title">{event.name}</h1>
+                <p className="event-details-description">{event.description}</p>
+                <div className="event-details-info">
+                    <p><strong>Type:</strong> {event.eventType}</p>
+                    <p><strong>Category:</strong> {event.category}</p>
+                    <p><strong>Organizer:</strong> {event.organizer}</p>
+                    <p><strong>Date:</strong> {event.date}</p>
+                    <p><strong>Time:</strong> {event.time}</p>
+                    <p><strong>Duration:</strong> {event.duration}</p>
+                    <p><strong>W3W Location:</strong> {event.w3wLocation}</p>
+                    <p><strong>Address:</strong> {`${event.address.street}, ${event.address.apartmentNumber}, ${event.address.city}, ${event.address.state}, ${event.address.zip}, ${event.address.country}`}</p>
+                    <p><strong>Phone:</strong> {event.address.phone}</p>
+                    <p><strong>Co-Hosts:</strong> {event.coHosts.join(', ')}</p>
+                </div>
+            </div>
         </div>
     );
 };

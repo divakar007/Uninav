@@ -2,10 +2,13 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './../Assets/css/MapComponent.css';
 import Tabs from './Homepage/Tabs';
 import PostButton from './Homepage/PostButton';
+import axios from 'axios';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
+import UserDataLogger from './User/UserDataLogger';
+import Button from 'react-bootstrap/Button';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'; // Import Marker
 import CurrentLocationButton from './Homepage/CurrentLocationButton';
 import WeatherCard from './Homepage/WeatherCard';
-import EventMarkers from './Events/EventMarkers';
 
 const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
 const WEATHER_API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
@@ -18,12 +21,27 @@ const MapComponent: React.FC = () => {
     const [isLoadingWeather, setIsLoadingWeather] = useState(false);
     const [weatherError, setWeatherError] = useState<string | null>(null);
     const mapRef = useRef<google.maps.Map | null>(null);
+    const [events, setEvents] = useState<any[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
-        setIsLoaded(true);
+        setIsLoaded(true); // Trigger re-render to ensure the map loads
     }, []);
 
+    // Fetch Events from Backend
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const response = await axios.get('/events/get-all-events');
+                setEvents(response.data);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        };
+        fetchEvents();
+    }, []);
+
+    // Handle Current Location
     const handleCurrentLocation = useCallback(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -36,7 +54,7 @@ const MapComponent: React.FC = () => {
                         mapRef.current.panTo(newCenter); // Center the map to current location
                         mapRef.current.setZoom(15); // Optional: Zoom in
                     }
-                    fetchWeatherData(newCenter).then();
+                    fetchWeatherData(newCenter);
                 },
                 (error) => {
                     console.error('Error getting current location:', error);
@@ -47,6 +65,7 @@ const MapComponent: React.FC = () => {
         }
     }, []);
 
+    // Fetch Weather Data
     const fetchWeatherData = async ({ lat, lng }: { lat: number, lng: number }) => {
         setIsLoadingWeather(true);
         setWeatherError(null);
@@ -116,8 +135,6 @@ const MapComponent: React.FC = () => {
                             {selectedLatLng && (
                                 <Marker position={selectedLatLng}/>
                             )}
-
-                            <EventMarkers/>
                             <div className="current-location" style={{margin: '0 10px 10px 0'}}>
                                 <CurrentLocationButton onClick={handleCurrentLocation}/>
                             </div>

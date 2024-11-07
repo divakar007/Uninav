@@ -23,8 +23,8 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public void createUser(User user) {
-        userRepository.save(user);
+    public User createUser(User user) {
+        return userRepository.save(user);
     }
 
     public User updateUser(User user) {
@@ -35,23 +35,15 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public boolean saveUserIfNew(String userId, String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt, String profileImage, String phoneNumber, String role, boolean verified) {
+    public boolean saveUserIfNew(String userId, String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt, String profileImage, String phoneNumber, List<String> favorites, String role, boolean verified) {
         Optional<User> user = getUserById(userId);
         if (user.isPresent()) {
             return false;
         }
         else {
-            this.createUser(new User(userId, name, email, profileImage, role, createdAt, updatedAt, phoneNumber, verified));
+            this.createUser(new User(userId, name, email, profileImage, favorites, role, createdAt, updatedAt, phoneNumber, verified));
             return true;
         }
-    }
-
-    public void save(User user) {
-        userRepository.save(user);
-    }
-
-    public User findUserById(String userId) {
-        return userRepository.findById(userId).orElse(null);
     }
 }
 

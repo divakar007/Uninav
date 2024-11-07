@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
-
 // Define the context type
 interface What3WordsContextType {
     selectedW3words: string | null;

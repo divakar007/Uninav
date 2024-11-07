@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import './../../Assets/css/SettingsPage.css';
 import { useUser } from "@clerk/clerk-react";
-import UserVerificationForm from "../User/UserVerificationForm";
-import '../../Assets/css/UserVerificationPage.css'
-import axios from "axios";
 
 const SettingsPage: React.FC = () => {
     const { user } = useUser();
@@ -15,33 +12,6 @@ const SettingsPage: React.FC = () => {
         secondaryEmail: '',
         profileImage: ''
     });
-    const [showForm, setShowForm] = useState(false);
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-    const [isRequestPresent, setIsRequestPresent] = useState<boolean | null>(false);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchRequestStatus = async () => {
-            try {
-                const response = await axios.get(`/user/is-request-present`, {
-                    params: { userId: user?.id}
-                });
-
-                if (response.data.status === "success") {
-                    setIsRequestPresent(response.data.isRequestPresent);
-                } else {
-                    setError('Failed to fetch request status');
-                }
-            } catch (error) {
-                console.error('Error fetching request status:', error);
-                setError('Failed to fetch request status');
-            }
-        };
-
-        if (user) {
-            fetchRequestStatus();
-        }
-    }, [user]);
 
     useEffect(() => {
         if (user) {
@@ -62,21 +32,6 @@ const SettingsPage: React.FC = () => {
             [name]: value
         }));
     };
-
-    const handleVerifyOnClick = () => {
-        setShowForm(true);
-    };
-
-    function handleClose() {
-        setShowForm(false);
-    }
-
-    function handleFormStatus(data: string) {
-        if(data === "success"){
-            handleClose();
-            setIsButtonDisabled(true);
-        }
-    }
 
     return (
         <Container className="settings-page mt-4">
@@ -160,28 +115,16 @@ const SettingsPage: React.FC = () => {
                         <strong>Verify Yourself in order to Post</strong>
                     </Col>
                     <Col xs="auto">
-                        <Button variant="danger" onClick={handleVerifyOnClick} disabled={isButtonDisabled || isRequestPresent?.valueOf()}>Verify</Button>
+                        <Button variant="danger">Verify</Button>
                     </Col>
                 </Row>
             </div>
 
+            {/* Footer */}
             <div className="footer-section mt-4 d-flex justify-content-end">
                 <Button variant="light" className="me-2">Cancel</Button>
                 <Button variant="dark">Save changes</Button>
             </div>
-
-            {showForm && (
-                <div className="user-verification-form-overlay">
-                    <div className="user-verification-form card p-4">
-                        <div className="d-flex justify-content-end">
-                            <Button variant="danger" onClick={handleClose}>
-                                Close
-                            </Button>
-                        </div>
-                        <UserVerificationForm sendFormStatusToSettingsPage={handleFormStatus}/>
-                    </div>
-                </div>
-            )}
         </Container>
     );
 };

@@ -1,23 +1,38 @@
-.event-details-container {
-    display: flex;
-    max-height: 100%;
-    transition: margin-left 0.3s;
-    overflow-y: auto;
+.event-details-page {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .event-details-image {
-    width: 100%; /* Make the image take the full width of its container */
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 8px; /* Rounded corners */
-    object-fit: cover; /* Ensure the image covers the area without distortion */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for a 3D effect */
-    margin-bottom: 15px; /* Space below the image */
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
 }
 
-.bg-gradient {
-    background: linear-gradient(135deg, #4caf50, #087f5b);
-}
-
-.shadow-sm {
+.event-details-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-details-title {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.event-details-description {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.event-details-info p {
+    font-size: 1em;
+    margin: 5px 0;
+}
+
+.event-details-info strong {
+    font-weight: bold;
 }

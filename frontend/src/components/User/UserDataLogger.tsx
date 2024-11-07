@@ -16,6 +16,7 @@ function UserDataLogger() {
                     updatedAt: user.updatedAt,
                     profileImage: user.imageUrl,
                     phoneNumber: user.primaryPhoneNumber?.phoneNumber,
+                    favorites : [],
                     role : "",
                     verified: false
                 };
@@ -33,7 +34,7 @@ function UserDataLogger() {
             }
         };
 
-        saveUserData().then();
+        saveUserData();
 
     }, [user]);
 
