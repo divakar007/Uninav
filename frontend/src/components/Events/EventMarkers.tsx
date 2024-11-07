@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext, useState} from 'react';
 import { EventContext } from "../context/EventContext";
 import { Marker, InfoWindow } from "@react-google-maps/api";
 import EventCard from "./EventCard";
@@ -35,6 +35,7 @@ const EventMarkers: React.FC = () => {
             ))}
         </div>
             {showEventCard && currentEvent && eventPosition && (
+                <div className={"marker-detail-info"}>
                 <InfoWindow
                     position={eventPosition}
                     onCloseClick={handleOnMouseOut}
@@ -47,6 +48,7 @@ const EventMarkers: React.FC = () => {
                         description={currentEvent.description || ""}
                     />
                 </InfoWindow>
+                </div>
             )}
         </div>
     );
