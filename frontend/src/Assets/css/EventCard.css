@@ -1,4 +1,6 @@
 .event-card {
+    height: 300px;
+    width: 175px;
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;

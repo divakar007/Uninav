@@ -19,7 +19,6 @@ public class S3Config {
     public S3Client s3Client() {
 
         Dotenv dotenv = Dotenv.configure()
-                .directory("./backend/.env")
                 .filename(".env") // Specify the filename if different
                 .load();
         String accessKeyId = dotenv.get("AWS_ACCESS_KEY_ID");

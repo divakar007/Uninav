@@ -3,7 +3,7 @@ import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import './../../Assets/css/SettingsPage.css';
 import { useUser } from "@clerk/clerk-react";
 import UserVerificationForm from "../User/UserVerificationForm";
-import '../../Assets/css/UserVerificationPage.css'
+// import '../../Assets/css/UserVerificationPage.css'
 import axios from "axios";
 
 const SettingsPage: React.FC = () => {

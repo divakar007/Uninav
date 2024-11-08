@@ -1,9 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, {useState} from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import '../../Assets/css/AddCategory.css';
 
 const AddCategory: React.FC = () => {
-
     const [newCategoryName, setNewCategoryName] = useState<string>('');
     const [newCategoryDescription, setNewCategoryDescription] = useState<string>('');
 
@@ -11,13 +11,13 @@ const AddCategory: React.FC = () => {
         if (newCategoryName.trim() && newCategoryDescription.trim()) {
             const currentTime = new Date();
             const year = currentTime.getFullYear();
-            const month = (currentTime.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based, so add 1
+            const month = (currentTime.getMonth() + 1).toString().padStart(2, '0');
             const day = currentTime.getDate().toString().padStart(2, '0');
             const hours = currentTime.getHours().toString().padStart(2, '0');
             const minutes = currentTime.getMinutes().toString().padStart(2, '0');
             const seconds = currentTime.getSeconds().toString().padStart(2, '0');
 
-            const localDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`
+            const localDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
             try {
                 const formData = new FormData();
                 formData.append("name", newCategoryName);
@@ -28,7 +28,7 @@ const AddCategory: React.FC = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     }
-                })
+                });
                 alert(response.data);
             } catch (e) {
                 alert("error");
@@ -39,8 +39,9 @@ const AddCategory: React.FC = () => {
             setNewCategoryDescription('');
         }
     }
+
     return (
-        <div className={"add-category-container"}>
+        <div className="add-category-container">
             <h2>Add Category</h2>
             <div className="mb-3">
                 <label htmlFor="categoryName" className="form-label">Category Name</label>
@@ -68,8 +69,7 @@ const AddCategory: React.FC = () => {
                 Add Category
             </button>
         </div>
-    )
-
-}
+    );
+};
 
 export default AddCategory;

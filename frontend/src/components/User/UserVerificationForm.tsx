@@ -1,20 +1,25 @@
-import React, { useState} from 'react';
+// UserVerificationForm.tsx
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {useUser} from "@clerk/clerk-react";
-import axios from "axios";
+import { useUser } from '@clerk/clerk-react';
+import axios from 'axios';
+import '../../Assets/css/UserVerificationForm.css';
+import GoBackButton from '../Buttons/GoBackButton';
 
 interface settingPageProps {
-    sendFormStatusToSettingsPage: (data: string) => void;
+    sendFormStatusToSettingsPage?: (data: string) => void;
 }
-const UserVerificationForm: React.FC<settingPageProps> = ({ sendFormStatusToSettingsPage }) => {
 
-    const {user, } = useUser();
+const UserVerificationForm: React.FC<settingPageProps> = ({ sendFormStatusToSettingsPage }) => {
+    const { user } = useUser();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         phone: '',
         idImage: null as File | null,
-        imagePreview: ""
+        imagePreview: ''
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,8 +43,8 @@ const UserVerificationForm: React.FC<settingPageProps> = ({ sendFormStatusToSett
 
             const response = await axios.post('/s3/upload', fileData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+                    'Content-Type': 'multipart/form-data'
+                }
             });
             return response.data.fileUrl;
         } catch (error) {
@@ -68,16 +73,16 @@ const UserVerificationForm: React.FC<settingPageProps> = ({ sendFormStatusToSett
 
             const response = await axios.post('/user/verification-request', requestBody, {
                 headers: {
-                    'Content-Type': 'application/json',
-                },
+                    'Content-Type': 'application/json'
+                }
             });
 
             if (response.data.status === 'success') {
                 alert('Form submitted successfully!');
-                sendFormStatusToSettingsPage("success");
+                sendFormStatusToSettingsPage && sendFormStatusToSettingsPage('success');
             } else if (response.data.status === 'request-already-exists') {
                 alert('A verification request already exists.');
-                sendFormStatusToSettingsPage("success");
+                sendFormStatusToSettingsPage && sendFormStatusToSettingsPage('success');
             } else {
                 alert('There was an issue with the submission.');
             }
@@ -89,13 +94,17 @@ const UserVerificationForm: React.FC<settingPageProps> = ({ sendFormStatusToSett
         }
     };
 
+    const handleGoBack = () => {
+        // Implement your go back logic here
+        navigate('/');
+    };
+
     return (
-        <div className="container d-flex align-items-center justify-content-between my-5">
-            {/* Form Section */}
-            <div className="card shadow p-4" style={{ flex: '1', maxWidth: '500px' }}>
+        <div className="verification-page">
+            <div className="form-section">
                 <h2 className="mb-3">User Verification</h2>
                 <p className="text-muted">Please provide your details to verify your identity.</p>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="verification-form">
                     <div className="mb-3">
                         <label htmlFor="name" className="form-label">Full Name</label>
                         <input
@@ -146,35 +155,23 @@ const UserVerificationForm: React.FC<settingPageProps> = ({ sendFormStatusToSett
                             onChange={handleChange}
                             required
                         />
+                        <small className="size-limit">File size limit: 1MB</small>
                         {formData.imagePreview && (
                             <div className="mt-3">
                                 <img
                                     src={formData.imagePreview}
-                                    alt="ID Proof"
-                                    className="img-thumbnail"
-                                    style={{ maxWidth: '200px' }}
+                                    alt="ID Proof Preview"
+                                    className="img-thumbnail preview-image"
                                 />
                             </div>
                         )}
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Submit</button>
+                    <GoBackButton onClick={handleGoBack}/>
                 </form>
             </div>
-
-            {/* Information Section */}
-            <div className="ms-4" style={{ flex: '1', maxWidth: '500px' }}>
-                <div className="card p-4 border-0 bg-light">
-                    <h5 className="text-primary">Untitled UI</h5>
-                    <p>
-                        This is an example of how user information can be verified to maintain
-                        security and integrity. It’s essential for platforms requiring sensitive user
-                        information to manage it with utmost care and efficiency.
-                    </p>
-                    <blockquote className="blockquote">
-                        <p className="mb-0">“Ensuring user identity helps build trust and secure interactions on any platform.”</p>
-                        <footer className="blockquote-footer">Maya Rothwell, <cite title="Source Title">Founder & CEO</cite></footer>
-                    </blockquote>
-                </div>
+            <div className="image-section">
+                <div className="promo-image">Image Placeholder</div>
             </div>
         </div>
     );

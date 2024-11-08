@@ -7,6 +7,8 @@ import axios from "axios";
 import {Button} from "react-bootstrap";
 import UserVerificationForm from "../User/UserVerificationForm";
 import SuccessModal from "../Models/SuccessModel";
+import { useNavigate } from 'react-router-dom';
+
 
 const PostEvent: React.FC = () => {
 
@@ -16,6 +18,9 @@ const PostEvent: React.FC = () => {
     const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
     const [showSuccessModel, setShowSuccessModel] = useState<boolean>(false)
     const [isRequested, setIsRequested] = useState<boolean>(false);
+    const navigate = useNavigate();
+
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -53,7 +58,7 @@ const PostEvent: React.FC = () => {
     }, [user]);
 
     function handleButtonClick() {
-        setShowVerificationForm(true);
+        navigate('/user-verification');
     }
 
     function formStatus(data: string) {
@@ -86,10 +91,10 @@ const PostEvent: React.FC = () => {
             }
             {!isVerified && !isRequested &&
                 <SignedIn>
-                    <div className="container my-5">
+                    <div className="unverified-user-container">
                         <h1>Unverified User</h1>
                         <p>
-                            Please get verified in Order to Create a post. click the button to submit the Verification Form.
+                            Please get verified in Order to Create a post. Click the button to submit the Verification Form.
                         </p>
                         <button className="btn btn-primary" onClick={handleButtonClick} disabled={isFormSubmitted}>
                             Get Verified
@@ -98,7 +103,7 @@ const PostEvent: React.FC = () => {
                 </SignedIn>
             }
             { isRequested && !isVerified &&
-                <div className="container my-5">
+                <div className="unverified-user-container">
                     <h1>Unverified User</h1>
                     <p>
                         Our team is working on your request. Please wait until your request get approved! Thanks for your patience. You will be notified once you got approved.

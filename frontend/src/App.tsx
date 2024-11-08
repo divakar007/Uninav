@@ -10,6 +10,7 @@ import EventsPage from "./components/Events/EventsPage";
 import Favorites from "./components/Homepage/Favorites";
 import AdminPage from "./components/Admin/adminPage";
 import EventDetailsPage from "./components/Events/EventDetailsPage";
+import UserVerificationForm from "./components/User/UserVerificationForm";
 
 // Set the base URL for Axios
 
@@ -27,6 +28,7 @@ function App() {
                     <Route path="/favorites" element={<Favorites/>}/>
                     <Route path="/adminpage" element={<AdminPage/>}/>
                     <Route path={"/events/:paramName"} element={<EventDetailsPage/>}/>
+                    <Route path="/user-verification" element={<UserVerificationForm/>}/>
                 </Routes>
             </div>
         </Router>

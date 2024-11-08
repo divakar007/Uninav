@@ -80,3 +80,34 @@
         height: 50vh; /* Adjust height for smaller screens */
     }
 }
+
+.unverified-user-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    margin: 2rem auto;
+    background-color: White;
+    border-radius: 8px;
+    max-width: 600px;
+    text-align: center;
+}
+
+.unverified-user-container h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #343a40;
+}
+
+.unverified-user-container p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    color: #6c757d;
+}
+
+.unverified-user-container .btn-primary {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+}
