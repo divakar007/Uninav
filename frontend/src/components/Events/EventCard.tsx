@@ -49,7 +49,9 @@ const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl }
 
     return (
         <div className="event-card">
-            <img src={imageUrl} alt={name} className="event-card-image" />
+            <div className="event-card-image">
+                {imageUrl ? <img src={imageUrl} alt={name} style={{ width: '100%', height: '100%' }} /> : <span>No Image</span>}
+            </div>
             <div className="event-card-content">
                 <h3 className="event-card-title">{name}</h3>
                 <p className="event-card-description">{description}</p>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './../Assets/css/MapComponent.css';
 import Tabs from './Homepage/Tabs';
 import PostButton from './Homepage/PostButton';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'; // Import Marker
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import CurrentLocationButton from './Homepage/CurrentLocationButton';
 import WeatherCard from './Homepage/WeatherCard';
 import EventMarkers from './Events/EventMarkers';
@@ -33,8 +33,8 @@ const MapComponent: React.FC = () => {
                     setCurrentLocation(newCenter);
                     setSelectedLatLng(newCenter);
                     if (mapRef.current) {
-                        mapRef.current.panTo(newCenter); // Center the map to current location
-                        mapRef.current.setZoom(15); // Optional: Zoom in
+                        mapRef.current.panTo(newCenter);
+                        mapRef.current.setZoom(15);
                     }
                     fetchWeatherData(newCenter).then();
                 },
@@ -66,7 +66,6 @@ const MapComponent: React.FC = () => {
         }
     };
 
-    // Handle map click to fetch weather for clicked location
     const handleMapClick = (e: google.maps.MapMouseEvent) => {
         const lat = e.latLng?.lat();
         const lng = e.latLng?.lng();
@@ -78,7 +77,6 @@ const MapComponent: React.FC = () => {
         }
     };
 
-    // Close the weather popup
     const handleCloseWeatherPopup = () => {
         setIsWeatherPopupVisible(false);
         setWeatherData(null);
@@ -89,17 +87,20 @@ const MapComponent: React.FC = () => {
         height: '100vh',
     };
 
-    // Set initial map center and zoom
     const defaultCenter = {
-        lat: 37.7749, // Example latitude
-        lng: -122.4194, // Example longitude
+        lat: 37.7749,
+        lng: -122.4194,
     };
 
     return (
         <div className="map-wrapper">
             <div className="map-container">
                 {isLoaded &&
-                    <LoadScript googleMapsApiKey={MAP_API_KEY || ''}>
+                    <LoadScript
+                        googleMapsApiKey={MAP_API_KEY || ''}
+                        onLoad={() => console.log('Google Maps API script loaded successfully')}
+                        onError={() => console.error('Error loading Google Maps API script')}
+                    >
                         <GoogleMap
                             mapContainerStyle={containerStyle}
                             center={currentLocation || defaultCenter}
@@ -109,21 +110,21 @@ const MapComponent: React.FC = () => {
                             }}
                             onClick={handleMapClick}
                         >
-                            {currentLocation && !selectedLatLng &&(
-                                <Marker position={currentLocation}/>
+                            {currentLocation && !selectedLatLng && (
+                                <Marker position={currentLocation} />
                             )}
 
                             {selectedLatLng && (
-                                <Marker position={selectedLatLng}/>
+                                <Marker position={selectedLatLng} />
                             )}
 
-                            <EventMarkers/>
-                            <div className="current-location" style={{margin: '0 10px 10px 0'}}>
-                                <CurrentLocationButton onClick={handleCurrentLocation}/>
+                            <EventMarkers />
+                            <div className="current-location" style={{ margin: '0 10px 10px 0' }}>
+                                <CurrentLocationButton onClick={handleCurrentLocation} />
                             </div>
 
-                            <div className="tabs-container"><Tabs/></div>
-                            <div className="post-button-container"><PostButton/></div>
+                            <div className="tabs-container"><Tabs /></div>
+                            <div className="post-button-container"><PostButton /></div>
 
                             {isWeatherPopupVisible && (
                                 <WeatherCard
