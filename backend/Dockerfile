@@ -1,0 +1,14 @@
+FROM ubuntu:latest
+LABEL authors="adivakararao"
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY build/libs/backend-0.0.1-SNAPSHOT.jar /app/backend-0.0.1-SNAPSHOT.jar
+
+ENV AWS_ACCESS_KEY_ID=AKIA2ZIONE6JAR3XK6ZJ
+ENV AWS_SECRET_ACCESS_KEY=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
+ENV AWS_REGION=us-east-1
+ENV AWS_S3_BUCKET=uninav
+ENV SPRING_PROFILES_ACTIVE=dev
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app/backend-0.0.1-SNAPSHOT.jar"]

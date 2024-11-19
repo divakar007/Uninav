@@ -95,16 +95,15 @@ const UserVerificationForm: React.FC<settingPageProps> = ({ sendFormStatusToSett
     };
 
     const handleGoBack = () => {
-        // Implement your go back logic here
         navigate('/');
     };
 
     return (
         <div className="verification-page">
             <div className="form-section">
-                <h2 className="mb-3">User Verification</h2>
-                <p className="text-muted">Please provide your details to verify your identity.</p>
                 <form onSubmit={handleSubmit} className="verification-form">
+                    <h2 className="mb-3">User Verification</h2>
+                    <p className="text-muted">Please provide your details to verify your identity.</p>
                     <div className="mb-3">
                         <label htmlFor="name" className="form-label">Full Name</label>
                         <input

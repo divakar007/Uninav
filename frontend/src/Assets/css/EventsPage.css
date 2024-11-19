@@ -1,5 +1,14 @@
 .event-cards-page {
-    padding: 2vh;
+    padding: 20px;
+    width: calc(100% - 6%); /* Adjusting for 20% sidebar width when expanded */
+    height: 100vh;
+    transition: width 0.3s; /* Smooth transition when sidebar toggles */
+    overflow: auto;
+}
+
+
+.sidebar.hover + .event-cards-page {
+    width: calc(100% - 15%);
 }
 
 .filter-bar {

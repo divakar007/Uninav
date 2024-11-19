@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
                     <FaCog className="nav-icon" />
                     <span className="nav-label">Settings</span>
                 </Link>
-                { user && user.primaryEmailAddress && "nikileshm@vt.edu" === user.primaryEmailAddress.toString()  && (
+                { user && user.primaryEmailAddress && "adivakararao@vt.edu" === user.primaryEmailAddress.toString()  && (
                     <Link to="/adminpage" className="nav-item">
                         <FaAd className="nav-icon" />
                         <span className="nav-label">Admin</span>

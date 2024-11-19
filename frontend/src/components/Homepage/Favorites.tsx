@@ -1,23 +1,13 @@
-import React, { useState } from 'react';
+import React, {useContext, useState} from 'react';
 import Button from '@mui/material/Button';
 import '../../Assets/css/Favorites.css';
+import {CategoryContext} from "../context/CategoryContext";
 
 const Favorites: React.FC = () => {
     const [subscriptions, setSubscriptions] = useState<string[]>([]);
     const [isChanged, setIsChanged] = useState<boolean>(false);
 
-    const categories = [
-        { name: 'Social Events', description: 'Social Events Description' },
-        { name: 'Academic Events', description: 'Academic Events Description' },
-        { name: 'Career Fairs & Networking', description: 'Career Fairs & Networking Description' },
-        { name: 'Sports and Recreation', description: 'Sports and Recreation Description' },
-        { name: 'Workshops & Training', description: 'Workshops & Training Description' },
-        { name: 'Campus Alerts', description: 'Campus Alerts Description' },
-        { name: 'Announcements', description: 'Announcements Description' },
-        { name: 'Transportation & Parking', description: 'Transportation & Parking Description' },
-        { name: 'Giveaways & Promotions', description: 'Giveaways & Promotions Description' },
-        { name: 'Other', description: 'Other Description' }
-    ];
+    const categories = useContext(CategoryContext);
 
     const handleSubscriptionChange = (category: string) => {
         setSubscriptions(prevSubscriptions =>
@@ -40,15 +30,6 @@ const Favorites: React.FC = () => {
             <ul className="categories-list">
                 {categories.map(category => (
                     <li key={category.name} className="category-item">
-                        <div className="item-hints">
-                            <div className="hint" data-position="4">
-                                <span className="hint-radius"></span>
-                                <span className="hint-dot">i</span>
-                                <div className="hint-content">
-                                    <p>{category.description}</p>
-                                </div>
-                            </div>
-                        </div>
                         <label>
                             <input
                                 className="switch"
@@ -58,6 +39,15 @@ const Favorites: React.FC = () => {
                             />
                             {category.name}
                         </label>
+                        <div className="item-hints">
+                            <div className="hint" data-position="4">
+                                <span className="hint-radius"></span>
+                                <span className="hint-dot">i</span>
+                                <div className="hint-content">
+                                    <p>{category.description}</p>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 ))}
             </ul>

@@ -1,11 +1,14 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
 import './../Assets/css/MapComponent.css';
 import Tabs from './Homepage/Tabs';
 import PostButton from './Homepage/PostButton';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api';
 import CurrentLocationButton from './Homepage/CurrentLocationButton';
 import WeatherCard from './Homepage/WeatherCard';
-import EventMarkers from './Events/EventMarkers';
+import EventCard from "./Events/EventCard";
+import { EventContext } from "./context/EventContext";
+import { Event } from "./types/Event";
+import { useLoadScript } from '@react-google-maps/api';
 
 const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
 const WEATHER_API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
@@ -18,11 +21,26 @@ const MapComponent: React.FC = () => {
     const [isLoadingWeather, setIsLoadingWeather] = useState(false);
     const [weatherError, setWeatherError] = useState<string | null>(null);
     const mapRef = useRef<google.maps.Map | null>(null);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const events = useContext(EventContext);
+    const [currentEvent, setCurrentEvent] = useState<Event | undefined>(undefined);
+    const [showEventCard, setShowEventCard] = useState<boolean>(false);
+    const [eventPosition, setEventPosition] = useState<{ lat: number, lng: number } | null>(null);
 
-    useEffect(() => {
-        setIsLoaded(true);
-    }, []);
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: MAP_API_KEY || '',
+    });
+
+    const handleMouseOver = (event: Event) => {
+        setCurrentEvent(event);
+        setEventPosition({ lat: event.latitude, lng: event.longitude });
+        setShowEventCard(true);
+    };
+
+    const handleOnMouseOut = () => {
+        setShowEventCard(false);
+        setCurrentEvent(undefined);
+        setEventPosition(null);
+    };
 
     const handleCurrentLocation = useCallback(() => {
         if (navigator.geolocation) {
@@ -92,52 +110,72 @@ const MapComponent: React.FC = () => {
         lng: -122.4194,
     };
 
+    if (loadError) return <div>Error loading maps</div>;
+    if (!isLoaded) return <div>Loading...</div>;
+
     return (
         <div className="map-wrapper">
             <div className="map-container">
-                {isLoaded &&
-                    <LoadScript
-                        googleMapsApiKey={MAP_API_KEY || ''}
-                        onLoad={() => console.log('Google Maps API script loaded successfully')}
-                        onError={() => console.error('Error loading Google Maps API script')}
-                    >
-                        <GoogleMap
-                            mapContainerStyle={containerStyle}
-                            center={currentLocation || defaultCenter}
-                            zoom={10}
-                            onLoad={(map) => {
-                                mapRef.current = map;
-                            }}
-                            onClick={handleMapClick}
+                <GoogleMap
+                    mapContainerStyle={containerStyle}
+                    center={currentLocation || defaultCenter}
+                    zoom={10}
+                    onLoad={(map) => {
+                        mapRef.current = map;
+                    }}
+                    onClick={handleMapClick}
+                >
+                    {currentLocation && !selectedLatLng && (
+                        <Marker position={currentLocation} />
+                    )}
+
+                    {selectedLatLng && (
+                        <Marker position={selectedLatLng} />
+                    )}
+
+                    {events.map(event => (
+                        event.latitude && event.longitude ? (
+                            <Marker
+                                key={event.id}
+                                position={{ lat: event.latitude, lng: event.longitude }}
+                                onMouseOver={() => handleMouseOver(event)}
+                                onMouseOut={handleOnMouseOut}
+                            />
+                        ) : null
+                    ))}
+
+                    {showEventCard && currentEvent && eventPosition && (
+                        <InfoWindow
+                            position={eventPosition}
+                            onCloseClick={handleOnMouseOut}
+                            options={{ pixelOffset: new window.google.maps.Size(0, -40) }}
                         >
-                            {currentLocation && !selectedLatLng && (
-                                <Marker position={currentLocation} />
-                            )}
+                            <EventCard
+                                id={currentEvent.id}
+                                name={currentEvent.name}
+                                imageUrl={currentEvent.imageUrl || ""}
+                                description={currentEvent.description || ""}
+                            />
+                        </InfoWindow>
+                    )}
 
-                            {selectedLatLng && (
-                                <Marker position={selectedLatLng} />
-                            )}
+                    <div className="current-location" style={{ margin: '0 10px 10px 0' }}>
+                        <CurrentLocationButton onClick={handleCurrentLocation} />
+                    </div>
 
-                            <EventMarkers />
-                            <div className="current-location" style={{ margin: '0 10px 10px 0' }}>
-                                <CurrentLocationButton onClick={handleCurrentLocation} />
-                            </div>
+                    <div className="tabs-container"><Tabs /></div>
+                    <div className="post-button-container"><PostButton /></div>
 
-                            <div className="tabs-container"><Tabs /></div>
-                            <div className="post-button-container"><PostButton /></div>
-
-                            {isWeatherPopupVisible && (
-                                <WeatherCard
-                                    isWeatherPopupVisible={isWeatherPopupVisible}
-                                    isLoadingWeather={isLoadingWeather}
-                                    weatherError={weatherError}
-                                    weatherData={weatherData}
-                                    closeWeatherPopup={handleCloseWeatherPopup}
-                                />
-                            )}
-                        </GoogleMap>
-                    </LoadScript>
-                }
+                    {isWeatherPopupVisible && (
+                        <WeatherCard
+                            isWeatherPopupVisible={isWeatherPopupVisible}
+                            isLoadingWeather={isLoadingWeather}
+                            weatherError={weatherError}
+                            weatherData={weatherData}
+                            closeWeatherPopup={handleCloseWeatherPopup}
+                        />
+                    )}
+                </GoogleMap>
             </div>
         </div>
     );

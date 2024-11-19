@@ -14,7 +14,7 @@
 .subscriptions-page h1 {
     font-size: 3vh;
     margin-bottom: 3vh;
-    color: #007bff;
+    color: rgb(0, 0, 0);
 }
 
 .categories-list {
@@ -124,7 +124,6 @@ button {
     margin: -12.5vh 0 0 -12.5vh;
     opacity: 0;
     visibility: hidden;
-    -webkit-transform: scale(0);
     transform: scale(0);
 }
 
@@ -135,7 +134,7 @@ button {
 }
 
 .item-hints .hint-content {
-    width: 30vh;
+    width: 80vh;
     position: absolute;
     z-index: 5;
     padding: 3.5vh 0;
@@ -146,7 +145,6 @@ button {
     pointer-events: none;
     background-color: #720c8f;
     border-radius: 0.4vh;
-    padding: 1.5vh;
 }
 
 .item-hints .hint:hover .hint-content {
@@ -199,6 +197,6 @@ button {
 }
 
 .item-hints .hint[data-position="4"] .hint-content {
-    right: 3vh;
+    left: 3vh;
     margin-left: 5.6vh;
 }

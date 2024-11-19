@@ -1,8 +1,13 @@
+/* Adjust width when the sidebar is collapsed */
+.sidebar.hover + .event-details-container {
+    width: calc(100% - 15%);
+}
+
 .event-details-container {
     display: flex;
-    max-height: 100%;
-    transition: margin-left 0.3s;
-    overflow-y: auto;
+    width: calc(100% - 6%); /* Adjusting for 20% sidebar width when expanded */
+    height: 100vh;
+    transition: width 0.3s; /* Smooth transition when sidebar toggles */
 }
 
 .event-details-image {

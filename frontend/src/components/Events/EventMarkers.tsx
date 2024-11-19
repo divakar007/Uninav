@@ -24,16 +24,16 @@ const EventMarkers: React.FC = () => {
 
     return (
         <div>
-        <div>
-            {events.map(event => (
-                <Marker
-                    key={event.id}
-                    position={{ lat: event.latitude, lng: event.longitude }}
-                    onMouseOver={() => handleMouseOver(event)}
-                    onMouseOut={handleOnMouseOut}
-                />
-            ))}
-        </div>
+            <div>
+                {events.map(event => (
+                    <Marker
+                        key={event.id}
+                        position={{ lat: event.latitude, lng: event.longitude }}
+                        onMouseOver={() => handleMouseOver(event)}
+                        onMouseOut={handleOnMouseOut}
+                    />
+                ))}
+            </div>
             {showEventCard && currentEvent && eventPosition && (
                 <InfoWindow
                     position={eventPosition}
