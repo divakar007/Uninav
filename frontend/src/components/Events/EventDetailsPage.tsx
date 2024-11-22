@@ -6,7 +6,8 @@ import { useParams } from 'react-router-dom';
 import { EventContext } from '../context/EventContext';
 import '../../Assets/css/EventDetailsPage.css';
 import EventsNavBar from '../Buttons/EventsNavBar';
-import Sidebar from '../Homepage/Sidebar'; // Import the sidebar component
+import Sidebar from '../Homepage/Sidebar';
+import GoogleCalendarButton from '../Buttons/GoogleCalendarButton';
 
 const FALLBACK_IMAGE_URL = 'https://via.placeholder.com/1200x400';
 
@@ -36,8 +37,8 @@ const EventDetailsPage: React.FC = () => {
     };
 
     return (
-        <div>
-            <Sidebar /> {/* Include the sidebar component */}
+        <div className="event-details-page">
+            <Sidebar/> {/* Include the sidebar component */}
             <div className="event-details-container">
                 {event && (
                     <>
@@ -66,6 +67,15 @@ const EventDetailsPage: React.FC = () => {
                                                 <Card.Body>
                                                     <p><FaCalendarAlt/> <strong>Date:</strong> {event.date}</p>
                                                     <p><FaClock /> <strong>Duration:</strong> {event.duration}</p>
+                                                    {event && (
+                                                        <GoogleCalendarButton
+                                                            eventName={event.name}
+                                                            eventDescription={event.description}
+                                                            eventDate={event.date}
+                                                            eventDuration={event.duration}
+                                                            eventLocation={`${event.address.street}, ${event.address.city}, ${event.address.state}, ${event.address.zip}, ${event.address.country}`}
+                                                        />
+                                                    )}
                                                 </Card.Body>
                                             </Card>
                                         )}

@@ -91,62 +91,67 @@ const UserVerificationList: React.FC = () => {
     return (
         <div>
             <h2>User Requests</h2>
-            <div style={{maxHeight: '80%', overflowY: 'auto'}}>
-                <div className="d-flex flex-wrap justify-content-start gap-3">
+            {userRequests.length === 0 ? (
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh'}}>
+                    <h2><span style={{color: '#DD2255'}}>No</span> User Requests Available.</h2>
+                </div>) : (
+                <div style={{maxHeight: '80%', overflowY: 'auto'}}>
+                    <div className="d-flex flex-wrap justify-content-start gap-3">
                     {userRequests.map(request => (
-                        <div
-                            key={request.id}
-                            className="card"
-                            style={{width: '30%', minWidth: '250px'}}
-                        >
-                            <img
-                                src={request.verificationDocumentUrl}
-                                alt="User ID"
-                                className="card-img-top img-thumbnail"
-                                style={{height: '200px', objectFit: 'cover', cursor: 'pointer'}}
-                                onClick={() => handleImageClick(request.verificationDocumentUrl)}
-                            />
-                            <div className="card-body">
-                                <h5 className="card-title">{request.name}</h5>
-                                <p className="card-text">
-                                    <strong>Phone:</strong> {request.phone}
-                                    <br/>
-                                    <strong>Email:</strong> {request.email}
-                                </p>
-                                <div className="d-flex gap-2">
-                                    <button
-                                        className="btn btn-success"
-                                        onClick={() => verifyUser(request.id)}
-                                    >
-                                        Verify
-                                    </button>
-                                    {request.isBlocked ? (
+                            <div
+                                key={request.id}
+                                className="card"
+                                style={{width: '30%', minWidth: '250px'}}
+                            >
+                                <img
+                                    src={request.verificationDocumentUrl}
+                                    alt="User ID"
+                                    className="card-img-top img-thumbnail"
+                                    style={{height: '200px', objectFit: 'cover', cursor: 'pointer'}}
+                                    onClick={() => handleImageClick(request.verificationDocumentUrl)}
+                                />
+                                <div className="card-body">
+                                    <h5 className="card-title">{request.name}</h5>
+                                    <p className="card-text">
+                                        <strong>Phone:</strong> {request.phone}
+                                        <br/>
+                                        <strong>Email:</strong> {request.email}
+                                    </p>
+                                    <div className="d-flex gap-2">
                                         <button
-                                            className="btn btn-warning"
-                                            onClick={() => unblockUser(request.id)}
+                                            className="btn btn-success"
+                                            onClick={() => verifyUser(request.id)}
                                         >
-                                            Unblock
+                                            Verify
                                         </button>
-                                    ) : (
+                                        {request.isBlocked ? (
+                                            <button
+                                                className="btn btn-warning"
+                                                onClick={() => unblockUser(request.id)}
+                                            >
+                                                Unblock
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className="btn btn-danger"
+                                                onClick={() => blockUser(request.id)}
+                                            >
+                                                Block
+                                            </button>
+                                        )}
                                         <button
-                                            className="btn btn-danger"
-                                            onClick={() => blockUser(request.id)}
+                                            className="btn btn-secondary"
+                                            onClick={() => deleteUser(request.id)}
                                         >
-                                            Block
+                                            Delete
                                         </button>
-                                    )}
-                                    <button
-                                        className="btn btn-secondary"
-                                        onClick={() => deleteUser(request.id)}
-                                    >
-                                        Delete
-                                    </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {showModal && (
                 <div className="modal show d-block" tabIndex={-1} role="dialog" onClick={closeModal}>
@@ -167,7 +172,6 @@ const UserVerificationList: React.FC = () => {
             )}
             <SuccessModal show={showSuccessModal} message={successMessage} onClose={handleClose}/>
         </div>
-
     );
 };
 

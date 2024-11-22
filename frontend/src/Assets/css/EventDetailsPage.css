@@ -1,35 +1,37 @@
-/*!* EventDetailsPage.css *!*/
-/*.sidebar {*/
-/*    position: fixed;*/
-/*    top: 0;*/
-/*    left: 0;*/
-/*    height: 100%;*/
-/*    transition: width 0.3s;*/
-/*    z-index: 1000; !* Ensure the sidebar is above other content *!*/
-/*}*/
+/* EventDetailsPage.css */
+.event-details-page .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transition: width 0.3s;
+    z-index: 1000; /* Ensure the sidebar is above other content */
+}
 
-/*.sidebar:hover ~ .event-details-container {*/
-/*    margin-left: 15%;*/
-/*}*/
+.event-details-page .sidebar:hover ~ .event-details-container {
+    margin-left: 15%;
+}
 
-/*.event-details-container {*/
-/*    margin-left: 6%;*/
-/*    transition: margin-left 0.3s;*/
-/*}*/
+.event-details-page .event-details-container {
+    margin-left: 6%;
+    transition: margin-left 0.3s;
+}
 
+.event-details-page .cover-image-container {
+    position: relative;
+    width: calc(100vw - 15%);
+    height: 300px;
+    overflow: hidden;
+    transition: width 0.3s;
+}
 
-/*.cover-image-container {*/
-/*    position: relative;*/
-/*    width: calc(100vw - 15%);*/
-/*    height: 300px;*/
-/*    overflow: hidden;*/
-/*    transition: width 0.3s;*/
-/*}*/
+.event-details-page .sidebar:hover ~ .cover-image-container {
+    width: calc(100% - 15%);
+}
 
-/*.sidebar:hover ~ .cover-image-container {*/
-/*    width: calc(100% - 15%);*/
-/*}*/
-
+.event-details-page .sidebar:hover ~ .rsvp-container {
+    margin-left: 15%;
+}
 /* Other existing styles */
 .event-details-container {
     font-family: Arial, sans-serif;
@@ -90,7 +92,8 @@
 
 .rsvp-container {
     flex: 1;
-    margin-left: 20px;
+    margin-left: 130vh;
+    position: fixed;
 }
 
 .nav-bar {
