@@ -36,6 +36,13 @@ const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl }
         };
     }, []);
 
+    const truncateDescription = (text: string, maxLength: number) => {
+        if (text.length > maxLength) {
+            return text.substring(0, maxLength) + '...';
+        }
+        return text;
+    };
+
     const renderDropdown = () => (
         <div
             className="options-dropdown"
@@ -54,7 +61,7 @@ const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl }
             </div>
             <div className="event-card-content">
                 <h3 className="event-card-title">{name}</h3>
-                <p className="event-card-description">{description}</p>
+                <p className="event-card-description">{truncateDescription(description, 100)}</p>
                 <Link to={`/events/${id}`} className="event-card-link">View Full Post</Link>
                 <div className="event-card-options">
                     <button ref={buttonRef} onClick={toggleOptions} className="options-button">⋮</button>

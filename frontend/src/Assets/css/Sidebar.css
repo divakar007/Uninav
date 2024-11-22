@@ -79,6 +79,14 @@
     color: #db2254; /* Ensure the label changes color when the whole item is hovered */
 }
 
+.nav-item.active {
+    color: #db2254;
+}
+
+.nav-item.active .nav-label {
+    color: #db2254;
+}
+
 .nav-icon {
     font-size: 20px;
 }
@@ -110,6 +118,7 @@
     margin-top: auto;
     display: flex;
     align-items: center;
+    justify-content: center;
     padding: 15px 20px;
     border-top: 1px solid #334155;
 }
@@ -138,4 +147,16 @@
     .sidebar {
         width: 80px;
     }
+}
+
+.login-icon {
+    font-size: 24px;
+    color: #28a745;
+    cursor: pointer;
+}
+
+.user-signin-button {
+    transition: opacity 0.3s;
+    width: 100%;
+    text-align: center;
 }

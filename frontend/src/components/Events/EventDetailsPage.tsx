@@ -1,18 +1,24 @@
-import React, {useContext, useState} from 'react';
-import { Button, Container, Card, ListGroup } from 'react-bootstrap';
+// EventDetailsPage.tsx
+import React, { useContext, useState, useEffect } from 'react';
+import { Button, Container, Card, ListGroup, Modal } from 'react-bootstrap';
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaThumbsUp, FaCheck, FaTimes, FaQuestion } from 'react-icons/fa';
-import {useParams} from "react-router-dom";
-import {EventContext} from "../context/EventContext";
-import "../../Assets/css/EventDetailsPage.css"
+import { useParams } from 'react-router-dom';
+import { EventContext } from '../context/EventContext';
+import '../../Assets/css/EventDetailsPage.css';
+import EventsNavBar from '../Buttons/EventsNavBar';
+import Sidebar from '../Homepage/Sidebar'; // Import the sidebar component
 
+const FALLBACK_IMAGE_URL = 'https://via.placeholder.com/1200x400';
 
 const EventDetailsPage: React.FC = () => {
     const [likeCount, setLikeCount] = useState<number>(0);
     const [rsvpStatus, setRsvpStatus] = useState<'yes' | 'no' | 'maybe' | ''>('');
+    const [showMediaModal, setShowMediaModal] = useState(false);
+    const [selectedTab, setSelectedTab] = useState<'description' | 'date-time' | 'location' | 'hosts' | 'media'>('description');
     const events = useContext(EventContext);
     const { paramName } = useParams<{ paramName: string }>();
-    const event = events.find(e=> e.id === paramName)
-    console.log(event);
+    const event = events.find(e => e.id === paramName);
+
     const handleLike = () => {
         setLikeCount(likeCount + 1);
     };
@@ -21,60 +27,119 @@ const EventDetailsPage: React.FC = () => {
         setRsvpStatus(status);
     };
 
-    return (
+    const handleMediaClick = () => {
+        setShowMediaModal(true);
+    };
 
-        <div className={"container event-details-container"}>
-        <Container className="my-5">
-            {event &&
-            <Card className="mb-4 shadow-sm">
-                <Card.Img variant="top" className={"event-details-image"} src={event.imageUrl || 'https://via.placeholder.com/800x400'}/>
-                <Card.Body>
-                    <h3>{event.name}</h3>
-                    <p>{event.description}</p>
-                    <div className="mb-3">
-                        <p><FaCalendarAlt/> <strong>Date:</strong> {event.date}</p>
-                        <p><FaClock/> <strong>Duration:</strong> {event.duration}</p>
-                        <p><FaMapMarkerAlt/>
-                            <strong>Location:</strong> {`${event.address.street}, ${event.address.city}, ${event.address.state}, ${event.address.zip}, ${event.address.country}`}
-                        </p>
-                        {event.what3wordsAddress && (
-                            <p><strong>What3Words:</strong> {event.what3wordsAddress}</p>
-                        )}
-                        <p><strong>Organizer ID:</strong> {event.organizerId}</p>
-                    </div>
-                    <Button variant="outline-primary" className="me-2" onClick={() => handleRSVP('yes')}>
-                        <FaCheck/> Yes
-                    </Button>
-                    <Button variant="outline-secondary" className="me-2" onClick={() => handleRSVP('maybe')}>
-                        <FaQuestion/> Maybe
-                    </Button>
-                    <Button variant="outline-danger" onClick={() => handleRSVP('no')}>
-                        <FaTimes/> No
-                    </Button>
-                    <div className="mt-3">
-                        <Button variant="outline-success" onClick={handleLike}>
-                            <FaThumbsUp/> Like {likeCount > 0 && `(${likeCount})`}
-                        </Button>
-                    </div>
-                    {rsvpStatus && (
-                        <div className="mt-3">
-                            <h5>Your RSVP: <span
-                                className={`text-${rsvpStatus === 'yes' ? 'success' : rsvpStatus === 'no' ? 'danger' : 'warning'}`}>{rsvpStatus.toUpperCase()}</span>
-                            </h5>
+    const handleMediaClose = () => {
+        setShowMediaModal(false);
+    };
+
+    return (
+        <div>
+            <Sidebar /> {/* Include the sidebar component */}
+            <div className="event-details-container">
+                {event && (
+                    <>
+                        <div className="cover-image-container">
+                            <div className="cover-image"
+                                 style={{backgroundImage: `url(${event.imageUrl || FALLBACK_IMAGE_URL})`}}></div>
+                            <div className="main-image-title-container">
+                                <img className="main-image" src={event.imageUrl || FALLBACK_IMAGE_URL} alt="Main Event"/>
+                                <h1 className="event-title">{event.name}</h1>
+                            </div>
                         </div>
-                    )}
-                </Card.Body>
-            </Card>
-            }
-            <ListGroup className="mb-4">
-                <ListGroup.Item><strong>Attendees:</strong> {event?.attendees.join(', ') || 'No attendees yet'}
-                </ListGroup.Item>
-                <ListGroup.Item><strong>Maybe Attendees:</strong> {event?.maybeAttendees.join(', ') || 'None'}
-                </ListGroup.Item>
-                <ListGroup.Item><strong>Declined Attendees:</strong> {event?.declinedAttendees.join(', ') || 'None'}
-                </ListGroup.Item>
-            </ListGroup>
-        </Container>
+                        <div className="content-container">
+                            <div className="nav-bar-container">
+                                <EventsNavBar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+                                <div className="nav-bar-content">
+                                    <Container>
+                                        {selectedTab === 'description' && (
+                                            <Card className="event-card">
+                                                <Card.Body>
+                                                    <p>{event.description}</p>
+                                                </Card.Body>
+                                            </Card>
+                                        )}
+                                        {selectedTab === 'date-time' && (
+                                            <Card className="event-card">
+                                                <Card.Body>
+                                                    <p><FaCalendarAlt/> <strong>Date:</strong> {event.date}</p>
+                                                    <p><FaClock /> <strong>Duration:</strong> {event.duration}</p>
+                                                </Card.Body>
+                                            </Card>
+                                        )}
+                                        {selectedTab === 'location' && (
+                                            <Card className="event-card">
+                                                <Card.Body>
+                                                    <p><FaMapMarkerAlt /> <strong>Location:</strong> {`${event.address.street}, ${event.address.city}, ${event.address.state}, ${event.address.zip}, ${event.address.country}`}</p>
+                                                    {event.what3wordsAddress && (
+                                                        <p><strong>What3Words:</strong> {event.what3wordsAddress}</p>
+                                                    )}
+                                                </Card.Body>
+                                            </Card>
+                                        )}
+                                        {selectedTab === 'hosts' && (
+                                            <Card className="event-card">
+                                                <Card.Body>
+                                                    <p><strong>Organizer ID:</strong> {event.organizerId}</p>
+                                                </Card.Body>
+                                            </Card>
+                                        )}
+                                        {selectedTab === 'media' && (
+                                            <Card className="event-card">
+                                                <Card.Body>
+                                                    <Button variant="link" onClick={handleMediaClick}>View Media</Button>
+                                                </Card.Body>
+                                            </Card>
+                                        )}
+                                    </Container>
+                                </div>
+                            </div>
+                            <div className="rsvp-container">
+                                <Card>
+                                    <Card.Body>
+                                        <Button variant="outline-primary" className="me-2" onClick={() => handleRSVP('yes')}>
+                                            <FaCheck/> Yes
+                                        </Button>
+                                        <Button variant="outline-secondary" className="me-2" onClick={() => handleRSVP('maybe')}>
+                                            <FaQuestion/> Maybe
+                                        </Button>
+                                        <Button variant="outline-danger" onClick={() => handleRSVP('no')}>
+                                            <FaTimes/> No
+                                        </Button>
+                                        <div className="mt-3">
+                                            <Button variant="outline-success" onClick={handleLike}>
+                                                <FaThumbsUp/> Like {likeCount > 0 && `(${likeCount})`}
+                                            </Button>
+                                        </div>
+                                        {rsvpStatus && (
+                                            <div className="mt-3">
+                                                <h5>Your RSVP: <span
+                                                    className={`text-${rsvpStatus === 'yes' ? 'success' : rsvpStatus === 'no' ? 'danger' : 'warning'}`}>{rsvpStatus.toUpperCase()}</span>
+                                                </h5>
+                                            </div>
+                                        )}
+                                    </Card.Body>
+                                </Card>
+                                <ListGroup className="mb-4">
+                                    <ListGroup.Item><strong>Attendees:</strong> {event.attendees.join(', ') || 'No attendees yet'}</ListGroup.Item>
+                                    <ListGroup.Item><strong>Maybe Attendees:</strong> {event.maybeAttendees.join(', ') || 'None'}</ListGroup.Item>
+                                    <ListGroup.Item><strong>Declined Attendees:</strong> {event.declinedAttendees.join(', ') || 'None'}</ListGroup.Item>
+                                </ListGroup>
+                            </div>
+                        </div>
+                        <Modal show={showMediaModal} onHide={handleMediaClose} centered>
+                            <Modal.Body>
+                                <img src={event.imageUrl || FALLBACK_IMAGE_URL} alt="Media" className="modal-image" />
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button variant="secondary" onClick={handleMediaClose}>Close</Button>
+                            </Modal.Footer>
+                        </Modal>
+                    </>
+                )}
+            </div>
         </div>
     );
 };
