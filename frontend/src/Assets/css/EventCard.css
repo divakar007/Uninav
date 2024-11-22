@@ -8,6 +8,7 @@
     max-width: 300px;
     margin: 16px;
     background-color: #fff;
+    cursor: pointer;
 }
 
 .event-card {

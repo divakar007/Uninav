@@ -1,30 +1,26 @@
-import React, {useContext, useState} from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import {CategoryContext} from "../context/CategoryContext";
-import {CategoryItem} from "../types/CategoryItem";
-import '../../Assets/css/AdminPage.css'
+import React, { useContext, useState } from 'react';
+import { CategoryContext } from "../context/CategoryContext";
+import { CategoryItem } from "../types/CategoryItem";
+import { PencilIcon, CheckIcon, XIcon } from 'lucide-react';
+import '../../Assets/css/CategoriesPage.css';
 
 const CategoriesPage: React.FC = () => {
-
     const categories = useContext<CategoryItem[]>(CategoryContext);
 
     const [editCategoryId, setEditCategoryId] = useState<number | null>(null);
     const [editCategoryName, setEditCategoryName] = useState<string>('');
     const [editCategoryDescription, setEditCategoryDescription] = useState<string>('');
 
-    // Function to start editing a category
     const startEdit = (category: CategoryItem) => {
         setEditCategoryId(category.id);
         setEditCategoryName(category.name);
         setEditCategoryDescription(category.description);
     };
 
-    // Function to save the updated category
     const saveCategory = (id: number) => {
         cancelEdit();
     };
 
-    // Function to cancel editing
     const cancelEdit = () => {
         setEditCategoryId(null);
         setEditCategoryName('');
@@ -32,58 +28,64 @@ const CategoriesPage: React.FC = () => {
     };
 
     return (
-        <div className="container my-4">
-            <div className="mb-5">
-                <h2>Existing Categories</h2>
-                <div className="list-container" style={{maxHeight: '800px', overflowY: 'auto'}}>
-                    <ul className="list-group">
-                        {categories.map(category => (
-                            <li key={category.id} className="list-group-item">
-                                {editCategoryId === category.id ? (
-                                    <div>
-                                        <input
-                                            type="text"
-                                            className="form-control mb-2"
-                                            value={editCategoryName}
-                                            onChange={(e) => setEditCategoryName(e.target.value)}
-                                            placeholder="Edit category name"
-                                        />
-                                        <textarea
-                                            className="form-control mb-2"
-                                            value={editCategoryDescription}
-                                            onChange={(e) => setEditCategoryDescription(e.target.value)}
-                                            placeholder="Edit category description"
-                                            rows={3}
-                                        />
+        <div className="categories-container">
+            <div className="categories-wrapper">
+                <h2 className="categories-title">Existing Categories</h2>
+                <div className="categories-list">
+                    {categories.map(category => (
+                        <div key={category.id} className="category-card">
+                            {editCategoryId === category.id ? (
+                                <div className="edit-form">
+                                    <input
+                                        type="text"
+                                        className="edit-input"
+                                        value={editCategoryName}
+                                        onChange={(e) => setEditCategoryName(e.target.value)}
+                                        placeholder="Edit category name"
+                                    />
+                                    <textarea
+                                        className="edit-textarea"
+                                        value={editCategoryDescription}
+                                        onChange={(e) => setEditCategoryDescription(e.target.value)}
+                                        placeholder="Edit category description"
+                                        rows={3}
+                                    />
+                                    <div className="button-group">
                                         <button
-                                            className="btn btn-success me-2"
+                                            className="save-button"
                                             onClick={() => saveCategory(category.id)}
                                         >
+                                            <CheckIcon size={18} />
                                             Save
                                         </button>
-                                        <button className="btn btn-secondary" onClick={cancelEdit}>
+                                        <button
+                                            className="cancel-button"
+                                            onClick={cancelEdit}
+                                        >
+                                            <XIcon size={18} />
                                             Cancel
                                         </button>
                                     </div>
-                                ) : (
-                                    <div>
-                                        <h5>{category.name}</h5>
-                                        <p>{category.description}</p>
+                                </div>
+                            ) : (
+                                <div>
+                                    <div className="category-header">
+                                        <h3 className="category-title">{category.name}</h3>
                                         <button
-                                            className="btn btn-primary"
+                                            className="edit-button"
                                             onClick={() => startEdit(category)}
                                         >
-                                            Edit
+                                            <PencilIcon size={18} />
                                         </button>
                                     </div>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
+                                    <p className="category-description">{category.description}</p>
+                                </div>
+                            )}
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
-
     );
 };
 
