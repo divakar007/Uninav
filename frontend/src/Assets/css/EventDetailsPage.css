@@ -157,3 +157,15 @@
     width: 100%;
     border-radius: 8px;
 }
+
+.zoomed-out-image {
+    width: 100%;
+    height: auto;
+    cursor: zoom-in;
+    transition: transform 0.2s;
+}
+
+.zoomed-out-image:hover {
+    transform: scale(1.05);
+    cursor: zoom-in;
+}

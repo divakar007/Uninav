@@ -9,6 +9,7 @@ import EventCard from "./Events/EventCard";
 import { EventContext } from "./context/EventContext";
 import { Event } from "./types/Event";
 import { useLoadScript } from '@react-google-maps/api';
+import SearchBar from './Homepage/SearchBar';
 
 const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
 const WEATHER_API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
@@ -126,18 +127,18 @@ const MapComponent: React.FC = () => {
                     onClick={handleMapClick}
                 >
                     {currentLocation && !selectedLatLng && (
-                        <Marker position={currentLocation} />
+                        <Marker position={currentLocation}/>
                     )}
 
                     {selectedLatLng && (
-                        <Marker position={selectedLatLng} />
+                        <Marker position={selectedLatLng}/>
                     )}
 
                     {events.map(event => (
                         event.latitude && event.longitude ? (
                             <Marker
                                 key={event.id}
-                                position={{ lat: event.latitude, lng: event.longitude }}
+                                position={{lat: event.latitude, lng: event.longitude}}
                                 onMouseOver={() => handleMouseOver(event)}
                                 onMouseOut={handleOnMouseOut}
                             />
@@ -148,7 +149,7 @@ const MapComponent: React.FC = () => {
                         <InfoWindow
                             position={eventPosition}
                             onCloseClick={handleOnMouseOut}
-                            options={{ pixelOffset: new window.google.maps.Size(0, -40) }}
+                            options={{pixelOffset: new window.google.maps.Size(0, -40)}}
                         >
                             <EventCard
                                 id={currentEvent.id}
@@ -159,12 +160,23 @@ const MapComponent: React.FC = () => {
                         </InfoWindow>
                     )}
 
-                    <div className="current-location" style={{ margin: '0 10px 10px 0' }}>
-                        <CurrentLocationButton onClick={handleCurrentLocation} />
+                    <div style={{
+                        position: 'absolute',
+                        top: '20px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 1
+                    }}>
+                        <SearchBar/>
                     </div>
 
-                    <div className="tabs-container"><Tabs /></div>
-                    <div className="post-button-container"><PostButton /></div>
+
+                    <div className="current-location" style={{margin: '0 10px 10px 0'}}>
+                        <CurrentLocationButton onClick={handleCurrentLocation}/>
+                    </div>
+
+                    <div className="tabs-container"><Tabs/></div>
+                    <div className="post-button-container"><PostButton/></div>
 
                     {isWeatherPopupVisible && (
                         <WeatherCard
@@ -182,3 +194,4 @@ const MapComponent: React.FC = () => {
 };
 
 export default MapComponent;
+

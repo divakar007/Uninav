@@ -3,6 +3,7 @@
     width: 100vw;
     height: 100vh;
     transition: margin-left 0.3s;
+    position: relative;
 }
 
 .map-component {

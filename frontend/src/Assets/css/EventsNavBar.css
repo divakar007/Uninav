@@ -39,7 +39,7 @@
     transition: all 0.2s ease-out;
 }
 
-.tab {
+.EventsNavBar-tab {
     width: 130px;
     height: 28px;
     position: absolute;

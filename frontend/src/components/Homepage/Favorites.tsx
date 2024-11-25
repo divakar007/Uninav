@@ -1,12 +1,15 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import Button from '@mui/material/Button';
 import '../../Assets/css/Favorites.css';
-import {CategoryContext} from "../context/CategoryContext";
+import { CategoryContext } from "../context/CategoryContext";
+import { SavedPostsContext } from '../context/SavedPostsContext';
+import EventCard from "../Events/EventCard";
 
 const Favorites: React.FC = () => {
     const [subscriptions, setSubscriptions] = useState<string[]>([]);
     const [isChanged, setIsChanged] = useState<boolean>(false);
-
+    const [activeTab, setActiveTab] = useState<'categories' | 'saved'>('categories');
+    const { savedPosts } = useContext(SavedPostsContext);
     const categories = useContext(CategoryContext);
 
     const handleSubscriptionChange = (category: string) => {
@@ -19,46 +22,83 @@ const Favorites: React.FC = () => {
     };
 
     const handleSaveChanges = () => {
-        // Save changes logic here
         console.log('Changes saved:', subscriptions);
         setIsChanged(false);
     };
 
     return (
         <div className="subscriptions-page">
-            <h1>Manage Your Subscriptions</h1>
-            <ul className="categories-list">
-                {categories.map(category => (
-                    <li key={category.name} className="category-item">
-                        <label>
-                            <input
-                                className="switch"
-                                type="checkbox"
-                                checked={subscriptions.includes(category.name)}
-                                onChange={() => handleSubscriptionChange(category.name)}
-                            />
-                            {category.name}
-                        </label>
-                        <div className="item-hints">
-                            <div className="hint" data-position="4">
-                                <span className="hint-radius"></span>
-                                <span className="hint-dot">i</span>
-                                <div className="hint-content">
-                                    <p>{category.description}</p>
+            <div className="favorites-tabs">
+                <button
+                    className={`favorites-tab ${activeTab === 'categories' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('categories')}
+                >
+                    Categories
+                </button>
+                <button
+                    className={`favorites-tab ${activeTab === 'saved' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('saved')}
+                >
+                    Saved Posts
+                </button>
+            </div>
+
+            {activeTab === 'categories' ? (
+                <div>
+                    <h1>Manage Your Subscriptions</h1>
+                    <ul className="categories-list">
+                        {categories.map(category => (
+                            <li key={category.name} className="category-item">
+                                <label>
+                                    <input
+                                        className="switch"
+                                        type="checkbox"
+                                        checked={subscriptions.includes(category.name)}
+                                        onChange={() => handleSubscriptionChange(category.name)}
+                                    />
+                                    {category.name}
+                                </label>
+                                <div className="item-hints">
+                                    <div className="hint" data-position="4">
+                                        <span className="hint-radius"></span>
+                                        <span className="hint-dot">i</span>
+                                        <div className="hint-content">
+                                            <p>{category.description}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSaveChanges}
-                disabled={!isChanged}
-            >
-                Save Changes
-            </Button>
+                            </li>
+                        ))}
+                    </ul>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSaveChanges}
+                        disabled={!isChanged}
+                    >
+                        Save Changes
+                    </Button>
+                </div>
+            ) : (
+                <div className="saved-posts">
+                    <h1>Your Saved Posts</h1>
+                    <div className="saved-posts-grid">
+                        {savedPosts.length > 0 ? (
+                            savedPosts.map(post => (
+                                <EventCard
+                                    key={post.id}
+                                    id={post.id}
+                                    name={post.name}
+                                    description={post.description}
+                                    imageUrl={post.imageUrl}
+                                />
+                            ))
+                        ) : (
+                            <p>No saved posts yet!</p>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

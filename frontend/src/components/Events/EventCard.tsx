@@ -1,7 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
+import { MdOpenInNew } from "react-icons/md";
+import { IoShareSocialSharp } from "react-icons/io5";
+import { FaRegBookmark } from "react-icons/fa";
+import { GoBookmarkSlash } from "react-icons/go";
+import ShareOptions from '../Buttons/ShareOptions';
 import '../../Assets/css/EventCard.css';
+import { SavedPostsContext } from '../context/SavedPostsContext';
 
 interface EventCardProps {
     id: string;
@@ -11,22 +17,23 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl }) => {
-    const [showOptions, setShowOptions] = useState(false);
+    const [showShareOptions, setShowShareOptions] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-    const buttonRef = useRef<HTMLButtonElement>(null);
+    const shareOptionsRef = useRef<HTMLDivElement>(null);
+    const { savedPosts, toggleSavedPost } = useContext(SavedPostsContext);
+    const isSaved = savedPosts.some(post => post.id === id);
 
-    const toggleOptions = () => {
-        if (buttonRef.current) {
-            const rect = buttonRef.current.getBoundingClientRect();
-            setDropdownPosition({ top: rect.bottom + window.scrollY, left: rect.left + window.scrollX });
-        }
-        setShowOptions((prev) => !prev);
+    const handleShareClick = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        const buttonRect = (event.target as HTMLElement).getBoundingClientRect();
+        setDropdownPosition({ top: buttonRect.bottom + window.scrollY, left: buttonRect.left + window.scrollX });
+        setShowShareOptions(true);
     };
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
-                setShowOptions(false);
+            if (shareOptionsRef.current && !shareOptionsRef.current.contains(event.target as Node)) {
+                setShowShareOptions(false);
             }
         };
 
@@ -43,14 +50,22 @@ const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl }
         return text;
     };
 
-    const renderDropdown = () => (
+    const renderShareOptions = () => (
         <div
-            className="options-dropdown"
-            style={{ top: dropdownPosition.top, left: dropdownPosition.left, position: 'absolute' }}
+            ref={shareOptionsRef}
+            className="share-options-container"
+            style={{
+                position: 'absolute',
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                zIndex: 1000
+            }}
         >
-            <button onClick={() => alert('Edit option clicked')}>Edit</button>
-            <button onClick={() => alert('Delete option clicked')}>Delete</button>
-            <button onClick={() => alert('Share option clicked')}>Share</button>
+            <ShareOptions
+                eventName={name}
+                eventLink={`${window.location.origin}/events/${id}`}
+                eventImage={imageUrl}
+            />
         </div>
     );
 
@@ -61,15 +76,26 @@ const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl }
             </div>
             <div className="event-card-content">
                 <h3 className="event-card-title">{name}</h3>
-                <p className="event-card-description">{truncateDescription(description, 100)}</p>
-                <Link to={`/events/${id}`} className="event-card-link">View Full Post</Link>
-                <div className="event-card-options">
-                    <button ref={buttonRef} onClick={toggleOptions} className="options-button">⋮</button>
-                    {showOptions && ReactDOM.createPortal(renderDropdown(), document.body)}
+                <p className="event-card-description">{truncateDescription(description, 20)}</p>
+                <div className="event-card-actions">
+                    <Link to={`/events/${id}`} className="action-button event-card-link">
+                        <MdOpenInNew size={20} />
+                    </Link>
+                    <button onClick={handleShareClick} className="action-button">
+                        <IoShareSocialSharp size={20} />
+                    </button>
+                    <button
+                        onClick={() => toggleSavedPost({id, name, description, imageUrl})}
+                        className="action-button"
+                    >
+                        {isSaved ? <GoBookmarkSlash size={20}/> : <FaRegBookmark size={20}/>}
+                    </button>
                 </div>
+                {showShareOptions && ReactDOM.createPortal(renderShareOptions(), document.body)}
             </div>
         </div>
     );
 };
+
 
 export default EventCard;
