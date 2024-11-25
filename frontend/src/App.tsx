@@ -12,6 +12,7 @@ import AdminPage from "./components/Admin/adminPage";
 import EventDetailsPage from "./components/Events/EventDetailsPage";
 import UserVerificationForm from "./components/User/UserVerificationForm";
 import { SavedPostsProvider } from "./components/context/SavedPostsContext";
+import NotificationsPage from "./components/Homepage/NotificationsPage";
 
 // Set the base URL for Axios
 
@@ -28,6 +29,7 @@ function App() {
                     <Route path="/post" element={<PostEvent/>}/>
                     <Route path="/events" element={<EventsPage/>}/>
                     <Route path="/favorites" element={<Favorites/>}/>
+                    <Route path="/notifications" element={<NotificationsPage />} />
                     <Route path="/adminpage" element={<AdminPage/>}/>
                     <Route path={"/events/:paramName"} element={<EventDetailsPage/>}/>
                     <Route path="/user-verification" element={<UserVerificationForm/>}/>
