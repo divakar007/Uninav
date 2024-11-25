@@ -99,7 +99,12 @@ const EventDetailsPage: React.FC = () => {
                                         {selectedTab === 'media' && (
                                             <Card className="event-card">
                                                 <Card.Body>
-                                                    <Button variant="link" onClick={handleMediaClick}>View Media</Button>
+                                                    <img
+                                                        src={event.imageUrl || FALLBACK_IMAGE_URL}
+                                                        alt="Event Media"
+                                                        className="zoomed-out-image"
+                                                        onClick={handleMediaClick}
+                                                    />
                                                 </Card.Body>
                                             </Card>
                                         )}

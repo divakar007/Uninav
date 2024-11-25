@@ -8,7 +8,6 @@
     --text-secondary: #4a5568;
     --accent-color: #DD2255;
 }
-
 .categories-container {
     min-height: 100vh;
     background: #fff;
@@ -16,13 +15,13 @@
     position: relative;
 }
 
-.categories-wrapper {
+.categories-container .categories-wrapper {
     max-width: 1000px;
     margin: 0 auto;
     position: relative;
 }
 
-.categories-title {
+.categories-container .categories-title {
     font-size: 2.5rem;
     font-weight: 800;
     color: var(--text-primary);
@@ -32,7 +31,7 @@
     padding-bottom: 1rem;
 }
 
-.categories-title::after {
+.categories-container .categories-title::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -44,7 +43,7 @@
     border-radius: 2px;
 }
 
-.categories-list {
+.categories-container .categories-list {
     display: grid;
     gap: 1.5rem;
     padding: 0.5rem;
@@ -54,8 +53,7 @@
     scrollbar-color: var(--accent-color) transparent;
 }
 
-/* Card Design */
-.category-card {
+.categories-container .category-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 16px;
@@ -68,7 +66,7 @@
     overflow: hidden;
 }
 
-.category-card::before {
+.categories-container .category-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -81,45 +79,44 @@
     transition: transform 0.3s ease;
 }
 
-.category-card:hover {
+.categories-container .category-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.category-card:hover::before {
+.categories-container .category-card:hover::before {
     transform: scaleX(1);
 }
 
-.category-header {
+.categories-container .category-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
 }
 
-.category-title {
+.categories-container .category-title {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--text-primary);
     margin: 0;
 }
 
-.category-description {
+.categories-container .category-description {
     color: var(--text-secondary);
     line-height: 1.6;
     margin: 0;
 }
 
-/* Form Elements */
-.edit-form {
+.categories-container .edit-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.edit-input,
-.edit-textarea {
+.categories-container .edit-input,
+.categories-container .edit-textarea {
     width: 100%;
     background: #ffffff;
     border: 2px solid var(--card-border);
@@ -130,26 +127,25 @@
     font-size: 1rem;
 }
 
-.edit-input:focus,
-.edit-textarea:focus {
+.categories-container .edit-input:focus,
+.categories-container .edit-textarea:focus {
     border-color: var(--accent-color);
     outline: none;
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
-.edit-textarea {
+.categories-container .edit-textarea {
     min-height: 120px;
     resize: vertical;
 }
 
-/* Buttons */
-.button-group {
+.categories-container .button-group {
     display: flex;
     gap: 1rem;
     margin-top: 0.5rem;
 }
 
-.edit-button {
+.categories-container .edit-button {
     background: transparent;
     border: none;
     padding: 0.5rem;
@@ -160,18 +156,18 @@
     opacity: 0;
 }
 
-.category-card:hover .edit-button {
+.categories-container .category-card:hover .edit-button {
     opacity: 1;
 }
 
-.edit-button:hover {
+.categories-container .edit-button:hover {
     background: rgba(99, 102, 241, 0.1);
     color: var(--accent-color);
     transform: rotate(15deg);
 }
 
-.save-button,
-.cancel-button {
+.categories-container .save-button,
+.categories-container .cancel-button {
     padding: 0.75rem 1.5rem;
     border-radius: 12px;
     border: none;
@@ -183,74 +179,71 @@
     gap: 0.5rem;
 }
 
-.save-button {
+.categories-container .save-button {
     background: var(--primary-gradient);
     color: white;
 }
 
-.save-button:hover {
+.categories-container .save-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
-.cancel-button {
+.categories-container .cancel-button {
     background: #f3f4f6;
     color: var(--text-secondary);
 }
 
-.cancel-button:hover {
+.categories-container .cancel-button:hover {
     background: #e5e7eb;
 }
 
-/* Custom Scrollbar */
-.categories-list::-webkit-scrollbar {
+.categories-container .categories-list::-webkit-scrollbar {
     width: 6px;
 }
 
-.categories-list::-webkit-scrollbar-track {
+.categories-container .categories-list::-webkit-scrollbar-track {
     background: transparent;
 }
 
-.categories-list::-webkit-scrollbar-thumb {
+.categories-container .categories-list::-webkit-scrollbar-thumb {
     background: var(--accent-color);
     border-radius: 3px;
 }
 
-/* Animations */
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+.categories-container @keyframes slideIn {
+                          from {
+                              opacity: 0;
+                              transform: translateY(20px);
+                          }
+                          to {
+                              opacity: 1;
+                              transform: translateY(0);
+                          }
+                      }
 
-.category-card {
+.categories-container .category-card {
     animation: slideIn 0.4s ease-out forwards;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .categories-container {
         padding: 1.5rem 1rem;
     }
 
-    .categories-title {
+    .categories-container .categories-title {
         font-size: 2rem;
     }
 
-    .categories-list {
+    .categories-container .categories-list {
         gap: 1rem;
     }
 
-    .category-card {
+    .categories-container .category-card {
         padding: 1.25rem;
     }
 
-    .button-group {
+    .categories-container .button-group {
         flex-direction: column;
     }
 }
