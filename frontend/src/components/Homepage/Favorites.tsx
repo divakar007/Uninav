@@ -94,7 +94,7 @@ const Favorites: React.FC = () => {
                                 />
                             ))
                         ) : (
-                            <p>No saved posts yet!</p>
+                            <p className="no-posts">No saved posts yet!</p>
                         )}
                     </div>
                 </div>
