@@ -25,11 +25,11 @@ const NotificationsPage: React.FC = () => {
         <div className="notifications-container">
             <h1 className="notifications-title">Notifications</h1>
 
-            <div className="tabs-wrapper">
+            <div className="notifications-tabs-wrapper">
                 {tabs.map(tab => (
                     <motion.button
                         key={tab.id}
-                        className={`tab ${activeTab === tab.id ? 'active' : ''}`}
+                        className={`notifications-tab ${activeTab === tab.id ? 'active' : ''}`}
                         onClick={() => setActiveTab(tab.id)}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}

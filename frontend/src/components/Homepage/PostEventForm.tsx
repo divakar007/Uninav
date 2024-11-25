@@ -453,32 +453,35 @@ const PostEventForm: React.FC = () => {
                     </Col>
                 </Row>
             </Form.Group>
-
             <Form.Group controlId="uploadAttachments" className="mb-3">
-                <Form.Label>Upload Attachments (Images Only)</Form.Label>
-                <Form.Control
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleFileChange}
-                />
+                <div className="upload-container">
+                    <Form.Label>Upload Attachments (Images Only)</Form.Label>
+                    <Form.Control
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleFileChange}
+                    />
 
-                {files.length > 0 && (
-                    <div className="attachment-list mt-2">
-                        {files.map((file, index) => (
-                            <div className="attachment-item" key={index}>
-                                <span className="attachment-name">{file.name}</span>
-                                {/*<span className="attachment-size">{(file.size / (1024 * 1024)).toFixed(1)}MB</span>*/}
-                            </div>
-                        ))}
-                    </div>
-                )}
+                    {files.length > 0 && (
+                        <div className="attachment-list">
+                            {files.map((file, index) => (
+                                <div className="attachment-item" key={index}>
+                                    <span className="attachment-name">{file.name}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
-                <Button variant={"success"} onClick={handleUpload} disabled={files.length === 0}>
-                    Upload Files
-                </Button>
+                    <Button
+                        className="upload-btn"
+                        onClick={handleUpload}
+                        disabled={files.length === 0}
+                    >
+                        Upload Files
+                    </Button>
+                </div>
             </Form.Group>
-
             <Form.Group controlId="attendees" className="mb-3" hidden={!(event.eventType === 'Group')}>
                 <Form.Label>Attendees</Form.Label>
                 <Form.Control

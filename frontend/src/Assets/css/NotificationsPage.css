@@ -11,7 +11,7 @@
     font-weight: 700;
 }
 
-.tabs-wrapper {
+.notifications-tabs-wrapper {
     display: flex;
     gap: 2rem;  /* Increased from 1rem for more spacing between tabs */
     margin-bottom: 2rem;
@@ -24,7 +24,7 @@
     width: 100%;  /* Ensures full width */
 }
 
-.tab {
+.notifications-tab {
     display: flex;
     align-items: center;
     gap: 0.8rem;  /* Increased from 0.5rem for better icon-text spacing */
@@ -42,7 +42,7 @@
     border: 1px solid #e2e8f0;
 }
 
-.tab.active {
+.notifications-tab.active {
     background: #DD2255;
     color: white;
 }
