@@ -38,7 +38,6 @@ const EventDetailsPage: React.FC = () => {
 
     return (
         <div className="event-details-page">
-            <Sidebar/> {/* Include the sidebar component */}
             <div className="event-details-container">
                 {event && (
                     <>
@@ -56,14 +55,14 @@ const EventDetailsPage: React.FC = () => {
                                 <div className="nav-bar-content">
                                     <Container>
                                         {selectedTab === 'description' && (
-                                            <Card className="event-card">
+                                            <Card className="eventdetails-card">
                                                 <Card.Body>
                                                     <p>{event.description}</p>
                                                 </Card.Body>
                                             </Card>
                                         )}
                                         {selectedTab === 'date-time' && (
-                                            <Card className="event-card">
+                                            <Card className="eventdetails-card">
                                                 <Card.Body>
                                                     <p><FaCalendarAlt/> <strong>Date:</strong> {event.date}</p>
                                                     <p><FaClock /> <strong>Duration:</strong> {event.duration}</p>
@@ -80,7 +79,7 @@ const EventDetailsPage: React.FC = () => {
                                             </Card>
                                         )}
                                         {selectedTab === 'location' && (
-                                            <Card className="event-card">
+                                            <Card className="eventdetails-card">
                                                 <Card.Body>
                                                     <p><FaMapMarkerAlt /> <strong>Location:</strong> {`${event.address.street}, ${event.address.city}, ${event.address.state}, ${event.address.zip}, ${event.address.country}`}</p>
                                                     {event.what3wordsAddress && (
@@ -90,14 +89,14 @@ const EventDetailsPage: React.FC = () => {
                                             </Card>
                                         )}
                                         {selectedTab === 'hosts' && (
-                                            <Card className="event-card">
+                                            <Card className="eventdetails-card">
                                                 <Card.Body>
                                                     <p><strong>Organizer ID:</strong> {event.organizerId}</p>
                                                 </Card.Body>
                                             </Card>
                                         )}
                                         {selectedTab === 'media' && (
-                                            <Card className="event-card">
+                                            <Card className="eventdetails-card">
                                                 <Card.Body>
                                                     <img
                                                         src={event.imageUrl || FALLBACK_IMAGE_URL}
@@ -114,6 +113,7 @@ const EventDetailsPage: React.FC = () => {
                             <div className="rsvp-container">
                                 <Card>
                                     <Card.Body>
+                                        <h3 className="rsvp-text">RSVP:</h3>
                                         <Button variant="outline-primary" className="me-2" onClick={() => handleRSVP('yes')}>
                                             <FaCheck/> Yes
                                         </Button>
