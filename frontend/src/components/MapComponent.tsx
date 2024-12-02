@@ -162,7 +162,7 @@ const MapComponent: React.FC = () => {
 
                     <div style={{
                         position: 'absolute',
-                        top: '20px',
+                        top: '7px',
                         left: '50%',
                         transform: 'translateX(-50%)',
                         zIndex: 1

@@ -20,6 +20,10 @@ const PostEventForm: React.FC = () => {
     const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
     const [showModel, setShowModel] = useState<boolean>(false);
     const [modelMessage, setModelMessage] = useState<string>("");
+    const [uploadMessage, setUploadMessage] = useState<string>('');
+    const [uploadStatus, setUploadStatus] = useState<'success' | 'error' | 'warning' | ''>('');
+    const [formErrors, setFormErrors] = useState<string>('');
+
     const [address, setAddress] = useState({
         street: '',
         apartmentNumber: '',
@@ -146,7 +150,19 @@ const PostEventForm: React.FC = () => {
             const selectedFiles = Array.from(e.target.files).filter(file =>
                 file.type.startsWith('image/')
             );
-            setFiles(selectedFiles);
+
+            // Check file size (1MB = 1048576 bytes)
+            const oversizedFiles = selectedFiles.some(file => file.size > 1048576);
+
+            if (oversizedFiles) {
+                setUploadMessage('File size must be less than 1MB');
+                setUploadStatus('warning');
+                setFiles([]);
+            } else {
+                setFiles(selectedFiles);
+                setUploadMessage('');
+                setUploadStatus('');
+            }
         }
     };
 
@@ -163,13 +179,26 @@ const PostEventForm: React.FC = () => {
                 },
             });
             event.imageUrl = response.data.fileUrl;
+            setUploadMessage('File uploaded successfully!');
+            setUploadStatus('success');
         } catch (error) {
-            console.error('Upload failed:', error);
+            setUploadMessage('Failed to upload file. Please try again.');
+            setUploadStatus('error');
         }
     };
 
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validate required fields
+        if (!event.name || !event.description || !event.categoryId || !date || !time ||
+            !event.address.street || !event.address.city || !event.address.state ||
+            !event.address.zip || !event.address.country || !event.address.phone) {
+            setFormErrors('Please fill in all required fields');
+            return;
+        }
+
         event.date = `${date}T${time}:00`;
         try {
             const response = await axios.post('/event/create-event', event, {
@@ -181,8 +210,8 @@ const PostEventForm: React.FC = () => {
                 setIsFormSubmitted(true);
                 setShowModel(true);
                 setModelMessage("Event is successfully created!");
+                setFormErrors('');
             }
-            console.log('Server response:', response.data);
         } catch (error) {
             console.error('Error submitting DateTime:', error);
             setIsFormSubmitted(true);
@@ -256,33 +285,39 @@ const PostEventForm: React.FC = () => {
     }
 
     return (
-    <Form onSubmit={handleSubmit} className="post-event-form">
+        <Form onSubmit={handleSubmit} className="post-event-form">
             <h3 className="mb-4">Create Event</h3>
 
+            {formErrors && (
+                <div className="alert alert-danger">{formErrors}</div>
+            )}
+
             <Form.Group controlId="name" className="mb-3">
-                <Form.Label>Event Name</Form.Label>
+                <Form.Label>Event Name <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                     type="text"
                     name="name"
                     value={event.name}
                     onChange={handleChange}
                     placeholder="Enter Event Name"
+                    required
                 />
             </Form.Group>
 
             <Form.Group controlId="description" className="mb-3">
-                <Form.Label>Event Description</Form.Label>
+                <Form.Label>Event Description <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                     as="textarea"
                     name="description"
                     value={event.description}
                     onChange={handleChange}
                     placeholder="Enter Description"
+                    required
                 />
             </Form.Group>
 
             <Form.Group controlId="eventType" className="mb-3">
-                <Form.Label>Event Type</Form.Label>
+                <Form.Label>Event Type <span className="text-danger">*</span></Form.Label>
                 <Form.Select
                     name="eventType"
                     value={event.eventType}
@@ -295,13 +330,14 @@ const PostEventForm: React.FC = () => {
             </Form.Group>
 
             <Form.Group controlId="categoryId" className="mb-3">
-                <Form.Label>Category</Form.Label>
+                <Form.Label>Category <span className="text-danger">*</span></Form.Label>
                 <Form.Select
                     name="categoryId"
                     value={event.categoryId}
                     onChange={handleChange}
+                    required
                 >
-                    <option>Select Category</option>
+                    <option value="">Select Category</option>
                     {categories.map(category =>
                         <option key={category.id} value={category.id}>{category.name}</option>
                     )}
@@ -382,15 +418,16 @@ const PostEventForm: React.FC = () => {
             </Form.Group>
 
             <Form.Group controlId="address" className="mb-3">
-                <Form.Label>Address</Form.Label>
+                <Form.Label>Address <span className="text-danger">*</span></Form.Label>
                 <Row>
-                    <Col md={6}>
+                <Col md={6}>
                         <Form.Control
                             type="text"
                             name="street"
                             value={event.address.street}
                             onChange={handleAddressChange}
                             placeholder="Street"
+                            required
                         />
                     </Col>
                     <Col md={6}>
@@ -399,7 +436,7 @@ const PostEventForm: React.FC = () => {
                             name="apartmentNumber"
                             value={event.address.apartmentNumber}
                             onChange={handleAddressChange}
-                            placeholder="Apartment Number"
+                            placeholder="Apartment Number (Optional)"
                         />
                     </Col>
                 </Row>
@@ -410,7 +447,8 @@ const PostEventForm: React.FC = () => {
                             name="city"
                             value={event.address.city}
                             onChange={handleAddressChange}
-                            placeholder="City"
+                            placeholder="City *"
+                            required
                         />
                     </Col>
                     <Col md={4}>
@@ -419,7 +457,8 @@ const PostEventForm: React.FC = () => {
                             name="state"
                             value={event.address.state}
                             onChange={handleAddressChange}
-                            placeholder="State"
+                            placeholder="State *"
+                            required
                         />
                     </Col>
                     <Col md={4}>
@@ -428,7 +467,8 @@ const PostEventForm: React.FC = () => {
                             name="zip"
                             value={event.address.zip}
                             onChange={handleAddressChange}
-                            placeholder="ZIP Code"
+                            placeholder="ZIP Code *"
+                            required
                         />
                     </Col>
                 </Row>
@@ -463,13 +503,25 @@ const PostEventForm: React.FC = () => {
                         onChange={handleFileChange}
                     />
 
-                    {files.length > 0 && (
-                        <div className="attachment-list">
-                            {files.map((file, index) => (
-                                <div className="attachment-item" key={index}>
-                                    <span className="attachment-name">{file.name}</span>
-                                </div>
-                            ))}
+                    {/*{files.length > 0 && (*/}
+                    {/*    <div className="attachment-list">*/}
+                    {/*        {files.map((file, index) => (*/}
+                    {/*            <div className="attachment-item" key={index}>*/}
+                    {/*                <span className="attachment-name">{file.name}</span>*/}
+                    {/*            </div>*/}
+                    {/*        ))}*/}
+                    {/*    </div>*/}
+                    {/*)}*/}
+
+                    {uploadMessage && (
+                        <div className={`upload-message ${uploadStatus}`} style={{
+                            color: uploadStatus === 'success' ? 'green' :
+                                uploadStatus === 'error' ? 'red' :
+                                    uploadStatus === 'warning' ? 'orange' : 'inherit',
+                            marginTop: '10px',
+                            marginBottom: '10px'
+                        }}>
+                            {uploadMessage}
                         </div>
                     )}
 
@@ -478,7 +530,7 @@ const PostEventForm: React.FC = () => {
                         onClick={handleUpload}
                         disabled={files.length === 0}
                     >
-                        Upload Files
+                        Upload File
                     </Button>
                 </div>
             </Form.Group>

@@ -124,33 +124,33 @@ const SettingsPage: React.FC = () => {
             </div>
 
             {/* Notifications */}
-            <div className="notifications-section">
-                <Row className="mb-3">
-                    <Col><strong>Notifications</strong></Col>
-                    <Col xs="auto"><strong>Email</strong></Col>
-                </Row>
+            {/*<div className="notifications-section">*/}
+            {/*    <Row className="mb-3">*/}
+            {/*        <Col><strong>Notifications</strong></Col>*/}
+            {/*        <Col xs="auto"><strong>Email</strong></Col>*/}
+            {/*    </Row>*/}
 
-                <Row className="notification-item align-items-center">
-                    <Col>Alerts</Col>
-                    <Col xs="auto">
-                        <Form.Check type="switch" defaultChecked />
-                    </Col>
-                </Row>
+            {/*    <Row className="notification-item align-items-center">*/}
+            {/*        <Col>Alerts</Col>*/}
+            {/*        <Col xs="auto">*/}
+            {/*            <Form.Check type="switch" defaultChecked />*/}
+            {/*        </Col>*/}
+            {/*    </Row>*/}
 
-                <Row className="notification-item align-items-center">
-                    <Col>Events</Col>
-                    <Col xs="auto">
-                        <Form.Check type="switch" />
-                    </Col>
-                </Row>
+            {/*    <Row className="notification-item align-items-center">*/}
+            {/*        <Col>Events</Col>*/}
+            {/*        <Col xs="auto">*/}
+            {/*            <Form.Check type="switch" />*/}
+            {/*        </Col>*/}
+            {/*    </Row>*/}
 
-                <Row className="notification-item align-items-center">
-                    <Col>Giveaways</Col>
-                    <Col xs="auto">
-                        <Form.Check type="switch" />
-                    </Col>
-                </Row>
-            </div>
+            {/*    <Row className="notification-item align-items-center">*/}
+            {/*        <Col>Giveaways</Col>*/}
+            {/*        <Col xs="auto">*/}
+            {/*            <Form.Check type="switch" />*/}
+            {/*        </Col>*/}
+            {/*    </Row>*/}
+            {/*</div>*/}
 
             {/* Authentication */}
             <div className="danger-zone mt-4">
