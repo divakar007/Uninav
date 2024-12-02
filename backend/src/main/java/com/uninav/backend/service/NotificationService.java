@@ -16,10 +16,6 @@ public class NotificationService {
         return notificationRepository.findByUserId(userId);
     }
 
-    public List<Notification> getNotificationsByEventId(String eventId) {
-        return notificationRepository.findByEventId(eventId);
-    }
-
     public List<Notification> getUnreadNotificationsByUserId(String userId) {
         return notificationRepository.findByUserIdAndRead(userId, false);
     }

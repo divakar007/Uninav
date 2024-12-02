@@ -36,7 +36,7 @@ dependencies {
 
 	// Email support for notifications
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-
+	implementation 'com.sun.mail:jakarta.mail:2.0.1'
 	// Thymeleaf for templating (if using web views)
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
@@ -56,10 +56,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-	// Commenting out dependencies not needed for MongoDB use case:
-	// runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
-	// runtimeOnly 'com.mysql:mysql-connector-j'
 
 	// Uncomment these if using Spring Security
 	// implementation 'org.springframework.boot:spring-boot-starter-security'

@@ -29,8 +29,8 @@ public class EventService {
         return eventRepository.findByWhat3wordsAddressContainingIgnoreCase(address);
     }
 
-    public Event createEvent(Event event) {
-        return eventRepository.save(event);
+    public void createEvent(Event event) {
+        eventRepository.save(event);
     }
 
     public Event updateEvent(Event event) {

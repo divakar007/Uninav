@@ -26,7 +26,7 @@ const EventsPage: React.FC = () => {
         event.id,
         event.name,
         event.description,
-        event.eventType,
+        event.type,
         event.categoryId,
         event.organizerId,
         event.date,
@@ -51,7 +51,7 @@ const EventsPage: React.FC = () => {
             const matchesSearch =
                 event.name?.toLowerCase().includes(searchLower) ||
                 event.description?.toLowerCase().includes(searchLower) ||
-                event.eventType?.toLowerCase().includes(searchLower) ||
+                event.type?.toLowerCase().includes(searchLower) ||
                 event.categoryId?.toLowerCase().includes(searchLower) ||
                 event.organizerId?.toLowerCase().includes(searchLower) ||
                 event.date?.toLowerCase().includes(searchLower) ||

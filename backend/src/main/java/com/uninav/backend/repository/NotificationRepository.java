@@ -7,8 +7,10 @@ import java.util.List;
 
 @Repository
 public interface NotificationRepository extends MongoRepository<Notification, String> {
-    List<Notification> findByUserId(String userId);  // Method to get notifications for a specific user
-    List<Notification> findByEventId(String eventId);  // Method to get notifications related to a specific event
+    Notification findNotificationById(String userId);
+
     List<Notification> findByUserIdAndRead(String userId, boolean b);
+
+    List<Notification> findByUserId(String userId);
 }
 

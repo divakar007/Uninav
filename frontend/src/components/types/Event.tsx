@@ -28,5 +28,5 @@ export type Event = {
     imageUrl?: string; // Optional image URL
     createdAt: string; // ISO date string
     updatedAt: string; // ISO date string
-    eventType: 'Private' | 'Group' | 'Public'; // Event type enumeration
+    type: 'Private' | 'Group' | 'Public'; // Event type enumeration
 };

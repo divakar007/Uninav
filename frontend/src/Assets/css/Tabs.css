@@ -56,15 +56,15 @@
     margin: 0px;
 }
 
-.container input[id="radio-1"]:checked ~ .glider {
+.container input[id="Public"]:checked ~ .glider {
     transform: translateX(0);
 }
 
-.container input[id="radio-2"]:checked ~ .glider {
+.container input[id="Group"]:checked ~ .glider {
     transform: translateX(100%);
 }
 
-.container input[id="radio-3"]:checked ~ .glider {
+.container input[id="Private"]:checked ~ .glider {
     transform: translateX(200%);
 }
 

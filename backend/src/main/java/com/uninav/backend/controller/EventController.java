@@ -1,18 +1,17 @@
 package com.uninav.backend.controller;
 
-import com.uninav.backend.model.Address;
 import com.uninav.backend.model.Event;
-import com.uninav.backend.service.EventService;
+import com.uninav.backend.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/event")
@@ -20,6 +19,14 @@ public class EventController {
 
     @Autowired
     private EventService eventService;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private UserPreferenceService userPreferenceService;
+    @Autowired
+    private CategoryService categoryService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/get-all-events")
     public ResponseEntity<List<Event>> getAllEvents() {
@@ -62,10 +69,11 @@ public class EventController {
     }
 
     @GetMapping("/delete-event")
-    public ResponseEntity<Map<String, Object>> deleteEvent(@RequestBody Map<String, Object> eventData) {
+    public ResponseEntity<Map<String, Object>> deleteEvent(@RequestBody Event eventData) {
         try {
-            eventService.deleteEvent(eventData.get("id").toString());
+            eventService.deleteEvent(eventData.getId());
             Map<String, Object> response = new HashMap<>();
+
             response.put("status", "success");
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
@@ -77,16 +85,23 @@ public class EventController {
     @PostMapping("/create-event")
     public ResponseEntity<Map<String, Object>> addEvent(@RequestBody Event eventData) {
         try {
-
+            List<String> categorySubscribers = new ArrayList<>();
+            eventData.setId(null);
             eventService.createEvent(eventData);
             Map<String, Object> response = new HashMap<>();
+            List<String> categorySubscribersIds = categoryService.getCategoryById(eventData.getCategoryId()).getSubscribers();
+            if(categorySubscribersIds != null && !categorySubscribersIds.isEmpty()) {
+               categorySubscribers.addAll(userService.getUserEmailsByIds(categorySubscribersIds));
+            }
+            emailService.sendEventCreationNotifications(eventData, categorySubscribers);
+
             response.put("status", "success");
             return ResponseEntity.status(HttpStatus.OK).body(response);
+
         }
         catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-
     }
 
     @GetMapping("/set-rsvp-count")

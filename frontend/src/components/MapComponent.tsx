@@ -1,18 +1,20 @@
-import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
+import React, {useState, useEffect, useRef, useCallback, useContext} from 'react';
 import './../Assets/css/MapComponent.css';
 import Tabs from './Homepage/Tabs';
 import PostButton from './Homepage/PostButton';
-import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api';
+import {GoogleMap, InfoWindow, Libraries, useLoadScript} from '@react-google-maps/api'; // Import Marker
 import CurrentLocationButton from './Homepage/CurrentLocationButton';
 import WeatherCard from './Homepage/WeatherCard';
-import EventCard from "./Events/EventCard";
-import { EventContext } from "./context/EventContext";
+import {EventContext} from "./context/EventContext";
 import { Event } from "./types/Event";
-import { useLoadScript } from '@react-google-maps/api';
-import SearchBar from './Homepage/SearchBar';
+import EventCard from "./Events/EventCard";
+import SearchBar from "./Homepage/SearchBar";
+
 
 const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
 const WEATHER_API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
+const libraries : Libraries = ["marker", "maps"]
+
 
 const MapComponent: React.FC = () => {
     const [currentLocation, setCurrentLocation] = useState<{ lat: number, lng: number } | null>(null);
@@ -23,34 +25,98 @@ const MapComponent: React.FC = () => {
     const [weatherError, setWeatherError] = useState<string | null>(null);
     const mapRef = useRef<google.maps.Map | null>(null);
     const events = useContext(EventContext);
-    const [currentEvent, setCurrentEvent] = useState<Event | undefined>(undefined);
     const [showEventCard, setShowEventCard] = useState<boolean>(false);
+    const [currentEvent, setCurrentEvent] = useState<Event | undefined>(undefined);
     const [eventPosition, setEventPosition] = useState<{ lat: number, lng: number } | null>(null);
-
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: MAP_API_KEY || '',
+        libraries,
     });
+    const [selectedTab, setSelectedTab] = useState<string>('Public');
+    const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
 
-    const handleMouseOver = (event: Event) => {
-        setCurrentEvent(event);
-        setEventPosition({ lat: event.latitude, lng: event.longitude });
-        setShowEventCard(true);
+    const handleTabChange = (tab: string) => {
+        setSelectedTab(tab);
     };
+    useEffect(() => {
+        const filtered = events.filter(event => event.type === selectedTab); // Filter events by category
+        setFilteredEvents(filtered);
+        console.log(selectedTab);
+        console.log(filtered);
+    }, [selectedTab, events]);
 
-    const handleOnMouseOut = () => {
-        setShowEventCard(false);
-        setCurrentEvent(undefined);
-        setEventPosition(null);
-    };
+    useEffect(() => {
+        if (!isLoaded || !window.google) return;
+        const markers: google.maps.marker.AdvancedMarkerElement[] = [];
 
-    const handleCurrentLocation = useCallback(() => {
+        if (selectedLatLng) {
+            const pin = new window.google.maps.marker.PinElement({
+                scale: 1,
+            });
+            const marker = new window.google.maps.marker.AdvancedMarkerElement({
+                map: mapRef.current,
+                position: selectedLatLng,
+                content: pin.element,
+                collisionBehavior: google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL
+            });
+            markers.push(marker);
+        } else if(currentLocation) {
+            const pin = new window.google.maps.marker.PinElement({
+                scale: 1,
+            });
+
+            const marker = new window.google.maps.marker.AdvancedMarkerElement({
+                map: mapRef.current,
+                position: currentLocation,
+                content: pin.element,
+                collisionBehavior: google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL
+            });
+            markers.push(marker);
+        }
+
+        filteredEvents.forEach((event) => {
+            if (event.latitude && event.longitude) {
+                const pin = new window.google.maps.marker.PinElement({
+                    scale: 1.5,
+                });
+
+                const marker = new window.google.maps.marker.AdvancedMarkerElement({
+                    map: mapRef.current,
+                    position: { lat: event.latitude, lng: event.longitude },
+                    content: pin.element,
+                    collisionBehavior: google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL
+                });
+
+                marker.addListener("click", ()=> {
+                    setCurrentEvent(event);
+                    setEventPosition({ lat: event.latitude, lng: event.longitude });
+                    setShowEventCard(true);
+                })
+
+                markers.push(marker);
+            }
+        });
+
+        return () => {
+            markers.forEach((marker) => (marker.map = null));
+        };
+    }, [isLoaded, filteredEvents, currentLocation, selectedLatLng]);
+
+    if (loadError) {
+        return <div>Error loading Google Maps. Please try again later.</div>;
+    }
+
+    if (!isLoaded) {
+        return <div>Loading...</div>;
+    }
+
+    const handleCurrentLocation = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
                     const newCenter = { lat: latitude, lng: longitude };
                     setCurrentLocation(newCenter);
-                    setSelectedLatLng(newCenter);
                     if (mapRef.current) {
                         mapRef.current.panTo(newCenter);
                         mapRef.current.setZoom(15);
@@ -64,7 +130,7 @@ const MapComponent: React.FC = () => {
         } else {
             console.error('Geolocation is not supported by this browser.');
         }
-    }, []);
+    };
 
     const fetchWeatherData = async ({ lat, lng }: { lat: number, lng: number }) => {
         setIsLoadingWeather(true);
@@ -101,6 +167,13 @@ const MapComponent: React.FC = () => {
         setWeatherData(null);
     };
 
+
+    function handleOnMouseOut() {
+        setShowEventCard(false);
+        setCurrentEvent(undefined);
+        setEventPosition(null);
+    }
+
     const containerStyle = {
         width: '100%',
         height: '100vh',
@@ -111,8 +184,9 @@ const MapComponent: React.FC = () => {
         lng: -122.4194,
     };
 
-    if (loadError) return <div>Error loading maps</div>;
-    if (!isLoaded) return <div>Loading...</div>;
+    const mapOptions = {
+        mapId : "DEMO_MAP_ID"
+    }
 
     return (
         <div className="map-wrapper">
@@ -125,31 +199,24 @@ const MapComponent: React.FC = () => {
                         mapRef.current = map;
                     }}
                     onClick={handleMapClick}
+                    options={mapOptions}
                 >
-                    {currentLocation && !selectedLatLng && (
-                        <Marker position={currentLocation}/>
-                    )}
+                    <div className="current-location" style={{margin: '0 10px 10px 0'}}>
+                        <CurrentLocationButton onClick={handleCurrentLocation}/>
+                    </div>
 
-                    {selectedLatLng && (
-                        <Marker position={selectedLatLng}/>
-                    )}
-
-                    {events.map(event => (
-                        event.latitude && event.longitude ? (
-                            <Marker
-                                key={event.id}
-                                position={{lat: event.latitude, lng: event.longitude}}
-                                onMouseOver={() => handleMouseOver(event)}
-                                onMouseOut={handleOnMouseOut}
-                            />
-                        ) : null
-                    ))}
+                    <div className="tabs-container"><Tabs onTabChange={handleTabChange}/></div>
+                    <div className="post-button-container"><PostButton/></div>
 
                     {showEventCard && currentEvent && eventPosition && (
                         <InfoWindow
                             position={eventPosition}
-                            onCloseClick={handleOnMouseOut}
-                            options={{pixelOffset: new window.google.maps.Size(0, -40)}}
+                            onCloseClick={() => {
+                                setShowEventCard(false);
+                                setCurrentEvent(undefined);
+                                setEventPosition(null);
+                            }}
+                            options={{ pixelOffset: new window.google.maps.Size(0, -40) }}
                         >
                             <EventCard
                                 id={currentEvent.id}
@@ -170,14 +237,6 @@ const MapComponent: React.FC = () => {
                         <SearchBar/>
                     </div>
 
-
-                    <div className="current-location" style={{margin: '0 10px 10px 0'}}>
-                        <CurrentLocationButton onClick={handleCurrentLocation}/>
-                    </div>
-
-                    <div className="tabs-container"><Tabs/></div>
-                    <div className="post-button-container"><PostButton/></div>
-
                     {isWeatherPopupVisible && (
                         <WeatherCard
                             isWeatherPopupVisible={isWeatherPopupVisible}
@@ -194,4 +253,3 @@ const MapComponent: React.FC = () => {
 };
 
 export default MapComponent;
-

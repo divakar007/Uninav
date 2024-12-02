@@ -21,8 +21,8 @@ public class CategoryService {
         return categoryRepository.findByName(name);
     }
 
-    public Category createCategory(Category category) {
-        return categoryRepository.save(category);
+    public void createCategory(Category category) {
+        categoryRepository.save(category);
     }
 
     public Category updateCategory(Category category) {
@@ -36,5 +36,9 @@ public class CategoryService {
     public boolean isCategoryNameExists(String name) {
         Optional<Category> category = Optional.ofNullable(categoryRepository.findByName(name));
         return category.isPresent();
+    }
+
+    public Category getCategoryById(String categoryId) {
+        return categoryRepository.findById(categoryId).orElse(null);
     }
 }

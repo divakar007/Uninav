@@ -51,7 +51,7 @@ const PostEventForm: React.FC = () => {
         imageUrl: '',
         createdAt: '',
         updatedAt: '',
-        eventType: 'Public'
+        type: 'Public'
     });
 
     const [files, setFiles] = useState<File[]>([]);
@@ -256,7 +256,7 @@ const PostEventForm: React.FC = () => {
             imageUrl: '',
             createdAt: '',
             updatedAt: '',
-            eventType: 'Public'
+            type: 'Public'
         })
     }
 
@@ -280,7 +280,7 @@ const PostEventForm: React.FC = () => {
             imageUrl: '',
             createdAt: '',
             updatedAt: '',
-            eventType: 'Public'
+            type: 'Public'
         })
     }
 
@@ -319,8 +319,8 @@ const PostEventForm: React.FC = () => {
             <Form.Group controlId="eventType" className="mb-3">
                 <Form.Label>Event Type <span className="text-danger">*</span></Form.Label>
                 <Form.Select
-                    name="eventType"
-                    value={event.eventType}
+                    name="type"
+                    value={event.type}
                     onChange={handleChange}
                 >
                     <option value="Public">Public</option>
@@ -503,16 +503,6 @@ const PostEventForm: React.FC = () => {
                         onChange={handleFileChange}
                     />
 
-                    {/*{files.length > 0 && (*/}
-                    {/*    <div className="attachment-list">*/}
-                    {/*        {files.map((file, index) => (*/}
-                    {/*            <div className="attachment-item" key={index}>*/}
-                    {/*                <span className="attachment-name">{file.name}</span>*/}
-                    {/*            </div>*/}
-                    {/*        ))}*/}
-                    {/*    </div>*/}
-                    {/*)}*/}
-
                     {uploadMessage && (
                         <div className={`upload-message ${uploadStatus}`} style={{
                             color: uploadStatus === 'success' ? 'green' :
@@ -534,7 +524,7 @@ const PostEventForm: React.FC = () => {
                     </Button>
                 </div>
             </Form.Group>
-            <Form.Group controlId="attendees" className="mb-3" hidden={!(event.eventType === 'Group')}>
+            <Form.Group controlId="attendees" className="mb-3" hidden={!(event.type === 'Group')}>
                 <Form.Label>Attendees</Form.Label>
                 <Form.Control
                     type="email"

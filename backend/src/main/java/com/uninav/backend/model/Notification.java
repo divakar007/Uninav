@@ -4,19 +4,27 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 
-@Getter
 @Setter
+@Getter
 @Document(collection = "notifications")
 public class Notification {
     @Id
     private String id;
     private String userId;
-    private String eventId;
+    private String subject;
     private String message;
-    private boolean isRead;
-    private LocalDateTime createdAt;
-    private LocalDateTime sentAt;
+    private LocalDateTime timestamp;
+    private boolean read;
+
+    public Notification(String userId, String subject, String message) {
+        this.userId = userId;
+        this.subject = subject;
+        this.message = message;
+        this.timestamp = LocalDateTime.now();
+        this.read = false;
+    }
 
 }

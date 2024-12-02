@@ -34,4 +34,5 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.verified = verified;
     }
+
 }
