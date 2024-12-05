@@ -223,6 +223,8 @@ const MapComponent: React.FC = () => {
                                 name={currentEvent.name}
                                 imageUrl={currentEvent.imageUrl || ""}
                                 description={currentEvent.description || ""}
+                                organizerId={currentEvent.organizerId}
+                                onDelete={() => {}}
                             />
                         </InfoWindow>
                     )}
