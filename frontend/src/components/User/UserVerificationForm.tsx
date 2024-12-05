@@ -170,7 +170,7 @@ const UserVerificationForm: React.FC<settingPageProps> = ({ sendFormStatusToSett
                 </form>
             </div>
             <div className="image-section">
-                <div className="promo-image">Image Placeholder</div>
+                <div className="promo-image"></div>
             </div>
         </div>
     );
