@@ -8,7 +8,7 @@ import {useUser} from '@clerk/clerk-react';
 import {useWhat3Words} from '../context/What3WordsContext';
 import {CategoryContext} from "../context/CategoryContext";
 import {CategoryItem} from "../types/CategoryItem";
-import successModel from "../Models/SuccessModel";
+import { useNavigate } from 'react-router-dom';
 import SuccessModel from "../Models/SuccessModel";
 
 const PostEventForm: React.FC = () => {
@@ -23,6 +23,7 @@ const PostEventForm: React.FC = () => {
     const [uploadMessage, setUploadMessage] = useState<string>('');
     const [uploadStatus, setUploadStatus] = useState<'success' | 'error' | 'warning' | ''>('');
     const [formErrors, setFormErrors] = useState<string>('');
+    const navigate = useNavigate();
 
     const [address, setAddress] = useState({
         street: '',
@@ -211,6 +212,7 @@ const PostEventForm: React.FC = () => {
                 setShowModel(true);
                 setModelMessage("Event is successfully created!");
                 setFormErrors('');
+                navigate('/'); // Navigate to the MapComponent page
             }
         } catch (error) {
             console.error('Error submitting DateTime:', error);
@@ -287,10 +289,6 @@ const PostEventForm: React.FC = () => {
     return (
         <Form onSubmit={handleSubmit} className="post-event-form">
             <h3 className="mb-4">Create Event</h3>
-
-            {formErrors && (
-                <div className="alert alert-danger">{formErrors}</div>
-            )}
 
             <Form.Group controlId="name" className="mb-3">
                 <Form.Label>Event Name <span className="text-danger">*</span></Form.Label>
@@ -397,7 +395,7 @@ const PostEventForm: React.FC = () => {
                             name="duration"
                             value={event.duration}
                             onChange={handleChange}
-                            placeholder="e.g., 3h 45m"
+                            placeholder="e.g., 3hr 45min"
                         />
                     </Form.Group>
                 </Col>
@@ -550,6 +548,10 @@ const PostEventForm: React.FC = () => {
                     )}
                 </div>
             </Form.Group>
+
+            {formErrors && (
+                <div className="alert alert-danger">{formErrors}</div>
+            )}
 
             <div className="form-actions mt-4">
                 <Button variant="outline-secondary" className="me-2" onClick={handleCancel}>

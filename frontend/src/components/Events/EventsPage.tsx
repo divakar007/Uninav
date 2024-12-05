@@ -23,9 +23,9 @@ const EventsPage: React.FC = () => {
     const { user } = useUser();
 
     const searchSuggestions = Array.from(new Set(events.flatMap(event => [
-        event.id,
+        /*event.id,*/
         event.name,
-        event.description,
+       /* event.description,
         event.type,
         event.categoryId,
         event.organizerId,
@@ -38,7 +38,7 @@ const EventsPage: React.FC = () => {
         event.address?.state,
         event.address?.zip,
         event.address?.country,
-        event.address?.phone,
+        event.address?.phone,*/
     ])));
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
