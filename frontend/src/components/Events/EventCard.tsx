@@ -8,20 +8,30 @@ import { GoBookmarkSlash } from "react-icons/go";
 import ShareOptions from '../Buttons/ShareOptions';
 import '../../Assets/css/EventCard.css';
 import { SavedPostsContext } from '../context/SavedPostsContext';
+import { useUser } from '@clerk/clerk-react';
+import { FaTrash } from 'react-icons/fa';
 
 interface EventCardProps {
     id: string;
     name: string;
     description: string;
     imageUrl: string;
+    organizerId: string;
+    onDelete: (id: string) => void;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl }) => {
+const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl, organizerId, onDelete }) => {
     const [showShareOptions, setShowShareOptions] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const shareOptionsRef = useRef<HTMLDivElement>(null);
     const { savedPosts, toggleSavedPost } = useContext(SavedPostsContext);
     const isSaved = savedPosts.some(post => post.id === id);
+
+    const { user } = useUser();
+
+    const handleDelete = () => {
+        onDelete(id);
+    };
 
     const handleShareClick = (event: React.MouseEvent) => {
         event.stopPropagation();
@@ -73,6 +83,11 @@ const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl }
         <div className="event-card">
             <div className="event-card-image">
                 {imageUrl ? <img src={imageUrl} alt={name} style={{ width: '100%', height: '100%' }} /> : <span>No Image</span>}
+                {user?.id === organizerId && (
+                    <button className="delete-button" onClick={handleDelete}>
+                        <FaTrash />
+                    </button>
+                )}
             </div>
             <div className="event-card-content">
                 <h3 className="event-card-title">{name}</h3>
@@ -85,7 +100,7 @@ const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl }
                         <IoShareSocialSharp size={20} />
                     </button>
                     <button
-                        onClick={() => toggleSavedPost({id, name, description, imageUrl})}
+                        onClick={() => toggleSavedPost({id, name, description, imageUrl, organizerId})}
                         className="action-button"
                     >
                         {isSaved ? <GoBookmarkSlash size={20}/> : <FaRegBookmark size={20}/>}
@@ -96,6 +111,5 @@ const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl }
         </div>
     );
 };
-
 
 export default EventCard;

@@ -91,6 +91,8 @@ const Favorites: React.FC = () => {
                                     name={post.name}
                                     description={post.description}
                                     imageUrl={post.imageUrl}
+                                    organizerId={post.organizerId}
+                                    onDelete={() => {}}
                                 />
                             ))
                         ) : (

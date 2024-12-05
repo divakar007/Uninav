@@ -5,6 +5,7 @@ interface SavedPost {
     name: string;
     description: string;
     imageUrl: string;
+    organizerId: string;
 }
 
 interface SavedPostsContextProps {

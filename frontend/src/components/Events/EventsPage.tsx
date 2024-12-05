@@ -208,6 +208,8 @@ const EventsPage: React.FC = () => {
                         name={event.name}
                         description={event.description}
                         imageUrl={event.imageUrl?.valueOf() || ""}
+                        organizerId={event.organizerId}
+                        onDelete={() => {}}
                     />
                 ))}
             </div>
