@@ -1,11 +1,65 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import '../../Assets/css/SearchBar.css';
 import { FaSearchLocation, FaMicrophone } from "react-icons/fa";
 
-const SearchBar: React.FC = () => {
+interface SearchBarProps {
+    map: google.maps.Map | null;
+    onPlaceSelect?: (place: google.maps.places.PlaceResult) => void;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ map, onPlaceSelect }) => {
     const [isListening, setIsListening] = useState(false);
     const [searchText, setSearchText] = useState('');
     const recognitionRef = useRef<any>(null);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+    const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+    useEffect(() => {
+        if (window.google && window.google.maps && searchInputRef.current && map) {
+            autocompleteRef.current = new window.google.maps.places.Autocomplete(
+                searchInputRef.current,
+                {
+                    types: ['geocode', 'establishment'],
+                    componentRestrictions: { country: 'us' }
+                }
+            );
+
+            const placeChangedListener = autocompleteRef.current.addListener('place_changed', () => {
+                const place = autocompleteRef.current?.getPlace();
+
+                if (place && place.geometry && map) {
+                    setSearchText(place.name || '');
+
+                    if (place.geometry.viewport) {
+                        map.fitBounds(place.geometry.viewport);
+                    } else if (place.geometry.location) {
+                        map.panTo(place.geometry.location);
+                        map.setZoom(15);
+                    }
+
+                    if (onPlaceSelect) {
+                        onPlaceSelect(place);
+                    }
+
+                    console.log('Selected Place:', {
+                        name: place.name,
+                        address: place.formatted_address,
+                        location: place.geometry.location?.toJSON()
+                    });
+                }
+            });
+
+            return () => {
+                if (placeChangedListener) {
+                    placeChangedListener.remove();
+                }
+            };
+        }
+    }, [map]);
+
+    const handleFormSubmit = (event: React.FormEvent) => {
+        event.preventDefault(); // Prevent the default form submission
+    };
 
     const startListening = () => {
         if ('webkitSpeechRecognition' in window) {
@@ -53,16 +107,17 @@ const SearchBar: React.FC = () => {
     };
 
     return (
-        <form action="#" className="search">
+        <form action="#" className="search" onSubmit={handleFormSubmit}>
             <button type="button" className="search__button">
                 <div className="search__icon">
                     <FaSearchLocation size={20} />
                 </div>
             </button>
             <input
+                ref={searchInputRef}
                 type="text"
                 className="search__input"
-                placeholder="Search..."
+                placeholder="Search locations..."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
             />
