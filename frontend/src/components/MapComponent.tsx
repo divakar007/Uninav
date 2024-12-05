@@ -179,6 +179,20 @@ const MapComponent: React.FC = () => {
         }
     };
 
+    const handleEventSelect = (event: { id: string, name: string, latitude: number, longitude: number }) => {
+        const selectedEvent = events.find(e => e.id === event.id);
+        if (selectedEvent && selectedEvent.latitude && selectedEvent.longitude) {
+            const lat = selectedEvent.latitude;
+            const lng = selectedEvent.longitude;
+            setMapCenter({ lat, lng });
+            setSelectedLatLng({ lat, lng });
+            if (mapRef.current) {
+                mapRef.current.panTo({ lat, lng });
+                mapRef.current.setZoom(15);
+            }
+        }
+    };
+
     const handleCloseWeatherPopup = () => {
         setIsWeatherPopupVisible(false);
         setWeatherData(null);
@@ -249,7 +263,9 @@ const MapComponent: React.FC = () => {
                     }}>
                         <SearchBar
                             map={mapRef.current}
+                            events={filteredEvents}
                             onPlaceSelect={handlePlaceSelect}
+                            onEventSelect={handleEventSelect}
                         />
                     </div>
 
