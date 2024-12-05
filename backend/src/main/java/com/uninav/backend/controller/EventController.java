@@ -85,19 +85,13 @@ public class EventController {
     @PostMapping("/create-event")
     public ResponseEntity<Map<String, Object>> addEvent(@RequestBody Event eventData) {
         try {
-            List<String> categorySubscribers = new ArrayList<>();
             eventData.setId(null);
             eventService.createEvent(eventData);
             Map<String, Object> response = new HashMap<>();
-            List<String> categorySubscribersIds = categoryService.getCategoryById(eventData.getCategoryId()).getSubscribers();
-            if(categorySubscribersIds != null && !categorySubscribersIds.isEmpty()) {
-               categorySubscribers.addAll(userService.getUserEmailsByIds(categorySubscribersIds));
-            }
+            List<String> categorySubscribers = new ArrayList<>(userPreferenceService.getCategorySubscribers(eventData.getCategoryId()));
             emailService.sendEventCreationNotifications(eventData, categorySubscribers);
-
             response.put("status", "success");
             return ResponseEntity.status(HttpStatus.OK).body(response);
-
         }
         catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

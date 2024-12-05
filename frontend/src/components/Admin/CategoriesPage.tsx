@@ -7,7 +7,7 @@ import '../../Assets/css/CategoriesPage.css';
 const CategoriesPage: React.FC = () => {
     const categories = useContext<CategoryItem[]>(CategoryContext);
 
-    const [editCategoryId, setEditCategoryId] = useState<number | null>(null);
+    const [editCategoryId, setEditCategoryId] = useState<string | null>(null);
     const [editCategoryName, setEditCategoryName] = useState<string>('');
     const [editCategoryDescription, setEditCategoryDescription] = useState<string>('');
 
@@ -17,7 +17,7 @@ const CategoriesPage: React.FC = () => {
         setEditCategoryDescription(category.description);
     };
 
-    const saveCategory = (id: number) => {
+    const saveCategory = (id: string) => {
         cancelEdit();
     };
 

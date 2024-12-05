@@ -136,6 +136,7 @@ const MapComponent: React.FC = () => {
                     const { latitude, longitude } = position.coords;
                     const newCenter = { lat: latitude, lng: longitude };
                     setCurrentLocation(newCenter);
+                    setMapCenter(newCenter);
                     if (mapRef.current) {
                         mapRef.current.panTo(newCenter);
                         mapRef.current.setZoom(15);
@@ -204,7 +205,7 @@ const MapComponent: React.FC = () => {
             setSelectedLatLng({ lat, lng });
             if (mapRef.current) {
                 mapRef.current.panTo({ lat, lng });
-                mapRef.current.setZoom(15);
+                mapRef.current.setZoom(25);
             }
         }
     };

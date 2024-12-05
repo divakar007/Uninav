@@ -17,6 +17,4 @@ public class Category {
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<String> subscribers;
-
 }

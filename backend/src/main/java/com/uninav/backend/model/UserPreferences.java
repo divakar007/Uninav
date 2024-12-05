@@ -15,10 +15,10 @@ public class UserPreferences {
     @Id
     private String id;
     private String userId;
-    private List<String> preferredCategories;
+    private List<String> preferredCategoryIds;
 
     public UserPreferences(String userId, List<String> preferredCategoryIds) {
         this.userId = userId;
-        this.preferredCategories = preferredCategoryIds;
+        this.preferredCategoryIds = preferredCategoryIds;
     }
 }

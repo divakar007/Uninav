@@ -10,6 +10,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +28,9 @@ public class EmailService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     public void sendEventCreationNotifications(Event event, List<String> categorySubscribers) {
         String subject = "New Event: " + event.getName();
@@ -63,7 +68,12 @@ public class EmailService {
 
     public void sendPreferencesUpdateNotification(User user, List<String> categories) {
         String subject = "Category Preferences Updated";
-        String htmlTemplate = createPreferencesTemplate(categories);
+        List<String> categoryNames = new ArrayList<>();
+        categories.forEach(category -> {
+            String categoryName = categoryService.getCategoryById(category).getName();
+            categoryNames.add(categoryName);
+        });
+        String htmlTemplate = createPreferencesTemplate(categoryNames);
 
         sendMimeEmail(user.getEmail(), subject, "Your preferences have been updated", htmlTemplate);
     }

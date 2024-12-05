@@ -1,9 +1,12 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Button from '@mui/material/Button';
 import '../../Assets/css/Favorites.css';
 import { CategoryContext } from "../context/CategoryContext";
 import { SavedPostsContext } from '../context/SavedPostsContext';
 import EventCard from "../Events/EventCard";
+import axios from "axios";
+import {useUser} from "@clerk/clerk-react";
+import SuccessModal from "../Models/SuccessModel";
 
 const Favorites: React.FC = () => {
     const [subscriptions, setSubscriptions] = useState<string[]>([]);
@@ -11,6 +14,29 @@ const Favorites: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'categories' | 'saved'>('categories');
     const { savedPosts } = useContext(SavedPostsContext);
     const categories = useContext(CategoryContext);
+    const {user} = useUser();
+    const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+    const [successMessage, setSuccessMessage] = useState<string>("");
+
+
+
+    useEffect(() => {
+        if (user === undefined){
+            return;
+        }
+
+        axios.get(`/user-preferences/${user?.id}`).then(result => {
+            if (result.data.status === "success")
+            {
+                setSubscriptions(result.data.preferences);
+            }
+            else {
+                setSubscriptions([]);
+            }
+        }
+        );
+    }, [user]);
+
 
     const handleSubscriptionChange = (category: string) => {
         setSubscriptions(prevSubscriptions =>
@@ -22,9 +48,28 @@ const Favorites: React.FC = () => {
     };
 
     const handleSaveChanges = () => {
-        console.log('Changes saved:', subscriptions);
+        try {
+            axios.post(`/user-preferences/set-preferences/${user?.id}`, subscriptions).then(result =>
+            {
+                if (result.data.status === "success"){
+                    setSuccessMessage(result.data.message);
+                    setShowSuccessModal(true);
+                }
+                else {
+                    setSuccessMessage(result.data.message);
+                    setShowSuccessModal(true);
+                }
+            });
+        } catch (e){
+            console.log(e);
+        }
         setIsChanged(false);
     };
+
+    function handleSuccessModelClose() {
+        setShowSuccessModal(false);
+        setSuccessMessage("");
+    }
 
     return (
         <div className="subscriptions-page">
@@ -48,13 +93,13 @@ const Favorites: React.FC = () => {
                     <h1>Manage Your Subscriptions</h1>
                     <ul className="categories-list">
                         {categories.map(category => (
-                            <li key={category.name} className="category-item">
+                            <li key={category.id} className="category-item">
                                 <label>
                                     <input
                                         className="switch"
                                         type="checkbox"
-                                        checked={subscriptions.includes(category.name)}
-                                        onChange={() => handleSubscriptionChange(category.name)}
+                                        checked={subscriptions.includes(category.id)}
+                                        onChange={() => handleSubscriptionChange(category.id)}
                                     />
                                     {category.name}
                                 </label>
@@ -101,6 +146,9 @@ const Favorites: React.FC = () => {
                     </div>
                 </div>
             )}
+            {
+                showSuccessModal && <SuccessModal show={showSuccessModal} message={successMessage} onClose={handleSuccessModelClose}/>
+            }
         </div>
     );
 };
