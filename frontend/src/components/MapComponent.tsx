@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, {useState, useEffect, useRef, useCallback, useContext} from 'react';
 import './../Assets/css/MapComponent.css';
 import Tabs from './Homepage/Tabs';
 import PostButton from './Homepage/PostButton';
@@ -9,6 +9,8 @@ import { EventContext } from "./context/EventContext";
 import { Event } from "./types/Event";
 import EventCard from "./Events/EventCard";
 import SearchBar from "./Homepage/SearchBar";
+import {useUser} from "@clerk/clerk-react";
+
 
 const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
 const WEATHER_API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
@@ -38,15 +40,22 @@ const MapComponent: React.FC = () => {
     const [selectedTab, setSelectedTab] = useState<string>('Public');
     const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
     const [mapCenter, setMapCenter] = useState<{ lat: number, lng: number }>(defaultCenter);
+    const user = useUser();
 
     const handleTabChange = (tab: string) => {
         setSelectedTab(tab);
     };
 
     useEffect(() => {
-        const filtered = events.filter(event => event.type === selectedTab);
-        setFilteredEvents(filtered);
-    }, [selectedTab, events]);
+        if(selectedTab === "Private"){
+            console.log(user.user?.id);
+            const filtered = events.filter(event => event.type === selectedTab && event.organizerId === user.user?.id);
+            setFilteredEvents(filtered);
+        } else {
+            const filtered = events.filter(event => event.type === selectedTab);
+            setFilteredEvents(filtered);
+        }
+    }, [selectedTab, events, user?.user?.id]);
 
     useEffect(() => {
         if (!isLoaded || !window.google) return;
@@ -79,26 +88,33 @@ const MapComponent: React.FC = () => {
 
         filteredEvents.forEach((event) => {
             if (event.latitude && event.longitude) {
-                const pin = new window.google.maps.marker.PinElement({
-                    scale: 1.5,
+                const glyphImg = document.createElement('img');
+                glyphImg.src = `https://uninav.s3.us-east-1.amazonaws.com/markerIcons/${event.categoryId}.png`;
+                glyphImg.style.width = '30px';
+                glyphImg.style.borderRadius = '50px';
+
+                const glyphSvgPinElement = new google.maps.marker.PinElement({
+                    glyph: glyphImg,
+                    scale: 1.5
                 });
 
                 const marker = new window.google.maps.marker.AdvancedMarkerElement({
                     map: mapRef.current,
                     position: { lat: event.latitude, lng: event.longitude },
-                    content: pin.element,
-                    collisionBehavior: google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL
+                    content: glyphSvgPinElement.element,
+                    collisionBehavior: google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL,
                 });
 
                 marker.addListener("click", () => {
                     setCurrentEvent(event);
                     setEventPosition({ lat: event.latitude, lng: event.longitude });
                     setShowEventCard(true);
-                });
+                })
 
                 markers.push(marker);
             }
         });
+
 
         return () => {
             markers.forEach((marker) => (marker.map = null));
@@ -197,12 +213,6 @@ const MapComponent: React.FC = () => {
         setIsWeatherPopupVisible(false);
         setWeatherData(null);
     };
-
-    function handleOnMouseOut() {
-        setShowEventCard(false);
-        setCurrentEvent(undefined);
-        setEventPosition(null);
-    }
 
     const containerStyle = {
         width: '100%',
