@@ -21,7 +21,7 @@ public class S3Service {
 
     public String uploadFile(MultipartFile file) {
         try {
-            Dotenv dotenv = Dotenv.configure().directory("./backend/.env").load();
+            Dotenv dotenv = Dotenv.configure().load();
             String bucketName = dotenv.get("AWS_S3_BUCKET");
             File convertedFile = convertMultiPartToFile(file);
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
