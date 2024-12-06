@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { CategoryContext } from "../context/CategoryContext";
 import { CategoryItem } from "../types/CategoryItem";
-import { PencilIcon, CheckIcon, XIcon } from 'lucide-react';
+import { BiPencil } from 'react-icons/bi'; // Pencil Icon
+import { AiOutlineCheck, AiOutlineClose } from 'react-icons/ai'; // Check and X Icons
 import '../../Assets/css/CategoriesPage.css';
 
 const CategoriesPage: React.FC = () => {
@@ -55,14 +56,14 @@ const CategoriesPage: React.FC = () => {
                                             className="save-button"
                                             onClick={() => saveCategory(category.id)}
                                         >
-                                            <CheckIcon size={18} />
+                                            <AiOutlineCheck size={18} />
                                             Save
                                         </button>
                                         <button
                                             className="cancel-button"
                                             onClick={cancelEdit}
                                         >
-                                            <XIcon size={18} />
+                                            <AiOutlineClose size={18} />
                                             Cancel
                                         </button>
                                     </div>
@@ -75,7 +76,7 @@ const CategoriesPage: React.FC = () => {
                                             className="edit-button"
                                             onClick={() => startEdit(category)}
                                         >
-                                            <PencilIcon size={18} />
+                                            <BiPencil size={18} />
                                         </button>
                                     </div>
                                     <p className="category-description">{category.description}</p>

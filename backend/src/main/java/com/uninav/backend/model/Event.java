@@ -15,19 +15,20 @@ public class Event {
     private String id;
     private String name;
     private String description;
-    private String categoryId; //
-    private String organizerId; // Reference to the User
-    private String what3wordsAddress; // Storing What3Words address as a string
+    private String categoryId;
+    private String organizerId;
+    private String what3wordsAddress;
     private Double latitude;
     private Double longitude;
-    private Address address; // Optional: human-readable address
+    private Address address;
     private LocalDateTime date;
-    private List<String> attendees; // List of User IDs who RSVPed "Yes"
-    private List<String> maybeAttendees; // List of User IDs who RSVPed "Maybe"
-    private List<String> declinedAttendees; // List of User IDs who RSVPed "No"
+    private List<String> attendees;
+    private List<String> maybeAttendees;
+    private List<String> declinedAttendees;
     private String imageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String type;
     private String duration;// Type;{Private, Group, Public}
+    private Integer likes;
 }
