@@ -62,9 +62,9 @@ public class EventController {
     public ResponseEntity<Map<String, Object>> getRsvpCount(@RequestBody Event eventData) {
         try {
             Map<String, Object> response = new HashMap<>();
-            response.put("yes", eventData.getAttendees());
-            response.put("no", eventData.getDeclinedAttendees());
-            response.put("maybe", eventData.getMaybeAttendees());
+            response.put("yes", eventData.getAttendees().size());
+            response.put("no", eventData.getDeclinedAttendees().size());
+            response.put("maybe", eventData.getMaybeAttendees().size());
             response.put("status", "success");
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
