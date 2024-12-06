@@ -18,10 +18,12 @@ public class S3Config {
     @Bean
     public S3Client s3Client() {
 
-        Dotenv dotenv = Dotenv.configure().load();
-        String accessKeyId = dotenv.get("AWS_ACCESS_KEY_ID");
-        String secretAccessKey = dotenv.get("AWS_SECRET_ACCESS_KEY");
-        String region = dotenv.get("AWS_REGION");
+//        Dotenv dotenv = Dotenv.configure()
+//                .filename(".env").directory("backend/.env") // Specify the filename if different
+//                .load();
+        String accessKeyId = System.getenv("AWS_ACCESS_KEY_ID");
+        String secretAccessKey = System.getenv("AWS_SECRET_ACCESS_KEY");
+        String region = System.getenv("AWS_REGION");
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
 
         assert region != null;
