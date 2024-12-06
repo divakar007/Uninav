@@ -18,9 +18,7 @@ public class S3Config {
     @Bean
     public S3Client s3Client() {
 
-        Dotenv dotenv = Dotenv.configure().directory("./")
-                .filename(".env")
-                .load();
+        Dotenv dotenv = Dotenv.configure().load();
         String accessKeyId = dotenv.get("AWS_ACCESS_KEY_ID");
         String secretAccessKey = dotenv.get("AWS_SECRET_ACCESS_KEY");
         String region = dotenv.get("AWS_REGION");
