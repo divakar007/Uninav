@@ -1,4 +1,3 @@
-// WeatherCard.tsx
 import React from 'react';
 import '../../Assets/css/WeatherCard.css';
 
@@ -24,25 +23,29 @@ const WeatherCard: React.FC<WeatherCardProps> = ({
             <button className="close-button" onClick={closeWeatherPopup}>
                 <i className="fas fa-times"></i>
             </button>
-            {/*<h5 className="title">Weather Information</h5>*/}
             {isLoadingWeather ? (
-                <p>Loading weather data...</p>
+                <p className="loading-text">Loading weather data...</p>
             ) : weatherError ? (
                 <p className="error">{weatherError}</p>
             ) : weatherData ? (
                 <div className="weather-card">
                     <div className="temperature">{weatherData.main.temp.toFixed(1)}°C</div>
+                    <div className="weather">
+                        <div
+                            className="weather-icon"
+                            style={{
+                                backgroundImage: `url(http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png)`,
+                            }}
+                        >
+                            <div className="weather-description">
+                                {weatherData.weather[0].description}
+                            </div>
+                        </div>
+
+                    </div>
                     <div className="bottom-info">
                         <div className="location">
                             <i className="fas fa-map-marker-alt"></i> {weatherData.name}
-                        </div>
-                        <div className="weather">
-                            <div
-                                className="weather-description"
-                                style={{backgroundImage: `url(http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png)`}}
-                            >
-                                {weatherData.weather[0].description}
-                            </div>
                         </div>
                     </div>
                     <div className="details-grid">

@@ -116,6 +116,8 @@
     cursor: zoom-in;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
+    width: 35vh;
+    height: 50vh;
 }
 
 .zoomed-out-image:hover{

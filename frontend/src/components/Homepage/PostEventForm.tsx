@@ -212,7 +212,7 @@ const PostEventForm: React.FC = () => {
                 setShowModel(true);
                 setModelMessage("Event is successfully created!");
                 setFormErrors('');
-                navigate('/'); // Navigate to the MapComponent page
+                // navigate('/'); // Navigate to the MapComponent page
             }
         } catch (error) {
             console.error('Error submitting DateTime:', error);
