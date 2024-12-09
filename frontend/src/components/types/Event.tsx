@@ -29,4 +29,5 @@ export type Event = {
     createdAt: string; // ISO date string
     updatedAt: string; // ISO date string
     type: 'Private' | 'Group' | 'Public'; // Event type enumeration
+    likes: 0
 };

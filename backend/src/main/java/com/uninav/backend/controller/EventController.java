@@ -1,7 +1,9 @@
 package com.uninav.backend.controller;
 
 import com.uninav.backend.model.Event;
+import com.uninav.backend.model.RSVP;
 import com.uninav.backend.service.*;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,9 @@ public class EventController {
     private CategoryService categoryService;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RSVPService rsvpService;
 
     @GetMapping("/get-all-events")
     public ResponseEntity<List<Event>> getAllEvents() {
@@ -113,4 +118,41 @@ public class EventController {
         return null;
     }
 
+    @PostMapping("/like/{eventId}")
+    public ResponseEntity<Map<String, Object>> likeEvent(@PathVariable String eventId) {
+        try{
+            Map<String, Object> response = new HashMap<>();
+            eventService.likeEvent(eventId);
+            response.put("status", "success");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @PostMapping("/unlike/{eventId}")
+    public ResponseEntity<Map<String, Object>> unlikeEvent(@PathVariable String eventId) {
+        try{
+            Map<String, Object> response = new HashMap<>();
+            eventService.unlikeEvent(eventId);
+            response.put("status", "success");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @PostMapping("/rsvp")
+    public ResponseEntity<Map<String, Object>> rsvp(@RequestBody RSVP RSVPData) {
+        try {
+            Map<String, Object> response = new HashMap<>();
+            rsvpService.rsvp(RSVPData);
+            eventService.addAttendeeWithStatus(RSVPData.getEventId(), RSVPData.getUserId(), RSVPData.getStatus());
+            emailService.sendRSVPNotification(eventService.getEventById(RSVPData.getEventId()).orElseThrow(), userService.findUserById(RSVPData.getUserId()), RSVPData.getStatus());
+            response.put("status", "success");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
 }

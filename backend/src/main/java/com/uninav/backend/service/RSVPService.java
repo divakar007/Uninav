@@ -3,6 +3,8 @@ import com.uninav.backend.model.RSVP;
 import com.uninav.backend.repository.RSVPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +28,11 @@ public class RSVPService {
 
     public void deleteRSVP(String rsvpId) {
         rsvpRepository.deleteById(rsvpId);
+    }
+
+    public void rsvp(RSVP rsvpData) {
+        rsvpData.setRsvpDate(LocalDateTime.now());
+        rsvpRepository.save(rsvpData);
     }
 }
 

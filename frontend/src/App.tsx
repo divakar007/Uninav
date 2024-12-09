@@ -17,7 +17,8 @@ import NotificationsPage from "./components/Homepage/NotificationsPage";
 // Set the base URL for Axios
 
 function App() {
-    axios.defaults.baseURL = 'https://uninav.onrender.com/api';
+    // axios.defaults.baseURL = 'https://uninav.onrender.com/api';
+    axios.defaults.baseURL = 'http://localhost:8080/api';
     return (
         <SavedPostsProvider>
         <Router basename="/Uninav">

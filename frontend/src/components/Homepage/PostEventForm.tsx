@@ -52,7 +52,8 @@ const PostEventForm: React.FC = () => {
         imageUrl: '',
         createdAt: '',
         updatedAt: '',
-        type: 'Public'
+        type: 'Public',
+        likes: 0
     });
 
     const [files, setFiles] = useState<File[]>([]);
@@ -258,7 +259,8 @@ const PostEventForm: React.FC = () => {
             imageUrl: '',
             createdAt: '',
             updatedAt: '',
-            type: 'Public'
+            type: 'Public',
+            likes: 0
         })
     }
 
@@ -282,7 +284,8 @@ const PostEventForm: React.FC = () => {
             imageUrl: '',
             createdAt: '',
             updatedAt: '',
-            type: 'Public'
+            type: 'Public',
+            likes: 0
         })
     }
 
