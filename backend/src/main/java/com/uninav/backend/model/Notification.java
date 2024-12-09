@@ -26,5 +26,4 @@ public class Notification {
         this.timestamp = LocalDateTime.now();
         this.read = false;
     }
-
 }

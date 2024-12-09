@@ -10,6 +10,7 @@ import '../../Assets/css/EventCard.css';
 import { SavedPostsContext } from '../context/SavedPostsContext';
 import { useUser } from '@clerk/clerk-react';
 import { FaTrash } from 'react-icons/fa';
+import axios from "axios";
 
 interface EventCardProps {
     id: string;
@@ -17,7 +18,7 @@ interface EventCardProps {
     description: string;
     imageUrl: string;
     organizerId: string;
-    onDelete: (id: string) => void;
+    onDelete: (id: string, organizerId: string) => void;
 }
 
 const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl, organizerId, onDelete }) => {
@@ -28,10 +29,6 @@ const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl, 
     const isSaved = savedPosts.some(post => post.id === id);
 
     const { user } = useUser();
-
-    const handleDelete = () => {
-        onDelete(id);
-    };
 
     const handleShareClick = (event: React.MouseEvent) => {
         event.stopPropagation();
@@ -84,7 +81,7 @@ const EventCard: React.FC<EventCardProps> = ({ id, name, description, imageUrl, 
             <div className="event-card-image">
                 {imageUrl ? <img src={imageUrl} alt={name} style={{ width: '100%', height: '100%' }} /> : <span>No Image</span>}
                 {user?.id === organizerId && (
-                    <button className="delete-button" onClick={handleDelete}>
+                    <button className="delete-button" onClick={() => onDelete(id, organizerId)}>
                         <FaTrash />
                     </button>
                 )}

@@ -2,6 +2,7 @@ package com.uninav.backend.controller;
 
 import com.uninav.backend.model.Notification;
 import com.uninav.backend.repository.NotificationRepository;
+import com.uninav.backend.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +15,12 @@ public class NotificationController {
 
     @Autowired
     private NotificationRepository notificationRepository;
+    @Autowired
+    private NotificationService notificationService;
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/get-notifications/{userId}")
     public ResponseEntity<List<Notification>> getUserNotifications(@PathVariable String userId) {
-        List<Notification> notifications = notificationRepository.findByUserIdAndRead(userId, false);
+        List<Notification> notifications = notificationService.findByUserIdAndRead(userId, false);
         return ResponseEntity.ok(notifications);
     }
 

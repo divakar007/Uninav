@@ -141,4 +141,19 @@ public class UserController {
             return ResponseEntity.status(500).body(response);
         }
     }
+
+    @GetMapping("/{organizerId}")
+    public ResponseEntity<Map<String, Object>> getUserWithId(@PathVariable String organizerId) {
+        try {
+            User user = userService.getUserById(organizerId).get();
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("name", user.getName());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new HashMap<>(
+                    Collections.singletonMap("status", "error")
+            ));
+        }
+    }
 }

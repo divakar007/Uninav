@@ -88,4 +88,7 @@ public class EventService {
         });
     }
 
+    public boolean isOrganizer(String id, String userId) {
+        return eventRepository.findById(id).map(event -> event.getOrganizerId().equals(userId)).orElse(false);
+    }
 }
