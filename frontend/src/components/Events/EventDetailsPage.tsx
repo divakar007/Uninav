@@ -1,48 +1,76 @@
 // EventDetailsPage.tsx
-import React, { useContext, useState, useEffect } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Button, Container, Card, ListGroup, Modal } from 'react-bootstrap';
-import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaThumbsUp, FaCheck, FaTimes, FaQuestion } from 'react-icons/fa';
+import {
+    FaCalendarAlt,
+    FaClock,
+    FaMapMarkerAlt,
+    FaThumbsUp,
+    FaCheck,
+    FaTimes,
+    FaQuestion,
+    FaThumbsDown
+} from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { EventContext } from '../context/EventContext';
 import '../../Assets/css/EventDetailsPage.css';
 import EventsNavBar from '../Buttons/EventsNavBar';
-import Sidebar from '../Homepage/Sidebar';
-import axios from 'axios';
 import GoogleCalendarButton from '../Buttons/GoogleCalendarButton';
+import axios from "axios";
+import {useUser} from "@clerk/clerk-react";
 
 const FALLBACK_IMAGE_URL = 'https://via.placeholder.com/1200x400';
 
 const EventDetailsPage: React.FC = () => {
-    const [likeCount, setLikeCount] = useState<number>(0);
+    const [like, setLike] = useState<boolean>(false);
     const [rsvpStatus, setRsvpStatus] = useState<'yes' | 'no' | 'maybe' | ''>('');
     const [showMediaModal, setShowMediaModal] = useState(false);
     const [selectedTab, setSelectedTab] = useState<'description' | 'date-time' | 'location' | 'hosts' | 'media'>('description');
-    const [organizerName, setOrganizerName] = useState<string>('');
     const events = useContext(EventContext);
     const { paramName } = useParams<{ paramName: string }>();
     const event = events.find(e => e.id === paramName);
+    const [likes, setLikes] = useState(event?.likes || 0);
+    const {user} = useUser();
 
     useEffect(() => {
-        const fetchOrganizerName = async () => {
-            if (event) {
-                try {
-                    const response = await axios.get(`/user/${event.organizerId}`);
-                    setOrganizerName(response.data.name);
-                } catch (error) {
-                    console.error("Error fetching organizer name:", error);
-                }
-            }
-        };
-
-        fetchOrganizerName();
-    }, [event]);
+        const storedLike = localStorage.getItem(`like_${event?.id}`);
+        setLike(storedLike === "true");
+        setLikes(event?.likes || 0);
+    }, [event?.id]);
 
     const handleLike = () => {
-        setLikeCount(likeCount + 1);
+        if (!like) {
+            axios.post(`/event/like/${event?.id}`).then(r => {
+                if (r.status === 200) {
+                    let newLike = !like;
+                    setLike(newLike);
+                    setLikes(likes + 1);
+                    localStorage.setItem(`like_${event?.id}`, newLike.toString());
+                }
+            });
+        } else {
+            axios.post(`/event/unlike/${event?.id}`).then(r => {
+                if (r.status === 200) {
+                    let newLike = !like;
+                    setLike(newLike);
+                    setLikes(likes-1);
+                    localStorage.setItem(`like_${event?.id}`, newLike.toString());
+                }
+            })
+        }
     };
 
     const handleRSVP = (status: 'yes' | 'no' | 'maybe') => {
         setRsvpStatus(status);
+        const RSVPData = new FormData();
+        RSVPData.append('eventId', event?.id || '');
+        RSVPData.append('status', status);
+        RSVPData.append('userId', user?.id || '');
+        const response = axios.post("/event/rsvp", RSVPData, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
     };
 
     const handleMediaClick = () => {
@@ -108,7 +136,7 @@ const EventDetailsPage: React.FC = () => {
                                         {selectedTab === 'hosts' && (
                                             <Card className="eventdetails-card">
                                                 <Card.Body>
-                                                    <p><strong>Organizer Name:</strong> {organizerName}</p>
+                                                    <p><strong>Organizer ID:</strong> {event.organizerId}</p>
                                                 </Card.Body>
                                             </Card>
                                         )}
@@ -142,7 +170,9 @@ const EventDetailsPage: React.FC = () => {
                                         </Button>
                                         <div className="mt-3">
                                             <Button variant="outline-success" onClick={handleLike}>
-                                                <FaThumbsUp/> Like {likeCount > 0 && `(${likeCount})`}
+                                                {like && <FaThumbsDown color={"red"} />}
+                                                {!like && <FaThumbsUp color={"green"} />}
+                                                Like ({likes})
                                             </Button>
                                         </div>
                                         {rsvpStatus && (

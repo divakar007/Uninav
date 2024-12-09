@@ -29,6 +29,6 @@ public class Event {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String type;
-    private String duration;// Type;{Private, Group, Public}
+    private String duration;
     private Integer likes;
 }

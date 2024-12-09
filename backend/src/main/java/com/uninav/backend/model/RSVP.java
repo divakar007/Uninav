@@ -12,9 +12,10 @@ import java.time.LocalDateTime;
 public class RSVP {
     @Id
     private String id;
-    private String userId; // ID of the user who RSVPed
-    private String eventId; // ID of the event
-    private String status; // RSVP status: "Yes", "No", "Maybe"
-    private LocalDateTime rsvpDate; // Date when the RSVP was made
+    private String userId;
+    private String eventId;
+    private String status;
+    private LocalDateTime rsvpDate;
+
 }
 

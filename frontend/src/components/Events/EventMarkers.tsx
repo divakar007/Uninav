@@ -22,6 +22,10 @@ const EventMarkers: React.FC = () => {
         setEventPosition(null);
     }
 
+    function handleOnDelete() {
+
+    }
+
     return (
         <div>
             <div>
@@ -46,7 +50,7 @@ const EventMarkers: React.FC = () => {
                         imageUrl={currentEvent.imageUrl || ""}
                         description={currentEvent.description || ""}
                         organizerId={currentEvent.organizerId}
-                        onDelete={() => {}}
+                        onDelete={handleOnDelete}
                     />
                 </InfoWindow>
             )}
