@@ -27,6 +27,7 @@ const EventDetailsPage: React.FC = () => {
     const [showMediaModal, setShowMediaModal] = useState(false);
     const [selectedTab, setSelectedTab] = useState<'description' | 'date-time' | 'location' | 'hosts' | 'media'>('description');
     const events = useContext(EventContext);
+    const [organizerName, setOrganizerName] = useState<string>('');
     const { paramName } = useParams<{ paramName: string }>();
     const event = events.find(e => e.id === paramName);
     const [likes, setLikes] = useState(event?.likes || 0);
@@ -38,6 +39,20 @@ const EventDetailsPage: React.FC = () => {
         setLikes(event?.likes || 0);
     }, [event?.id]);
 
+    useEffect(() => {
+        const fetchOrganizerName = async () => {
+            if (event) {
+                try {
+                    const response = await axios.get(`/user/${event.organizerId}`);
+                    setOrganizerName(response.data.name);
+                } catch (error) {
+                    console.error("Error fetching organizer name:", error);
+                }
+            }
+        };
+
+        fetchOrganizerName();
+    }, [event]);
     const handleLike = () => {
         if (!like) {
             axios.post(`/event/like/${event?.id}`).then(r => {
@@ -136,7 +151,7 @@ const EventDetailsPage: React.FC = () => {
                                         {selectedTab === 'hosts' && (
                                             <Card className="eventdetails-card">
                                                 <Card.Body>
-                                                    <p><strong>Organizer ID:</strong> {event.organizerId}</p>
+                                                    <p><strong>Organizer Name:</strong> {organizerName}</p>
                                                 </Card.Body>
                                             </Card>
                                         )}

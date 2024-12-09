@@ -31,6 +31,8 @@ public class EmailService {
 
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private NotificationService notificationService;
 
     public void sendEventCreationNotifications(Event event, List<String> categorySubscribers) {
         String subject = "New Event: " + event.getName();
@@ -40,12 +42,19 @@ public class EmailService {
             categorySubscribers.forEach(user ->
                 sendMimeEmail(user, subject, "New event in your subscribed category", htmlTemplate)
             );
+            categorySubscribers.forEach(user ->
+                notificationService.createNotification(new Notification(userService.getUserByEmail(user).get().getId(), subject, htmlTemplate))
+            );
         } else if ("Group".equals(event.getType())) {
             event.getAttendees().forEach(attendee ->
                 sendMimeEmail(attendee, subject, "You're invited to an event", htmlTemplate)
             );
+            event.getAttendees().forEach(attendee -> {
+                notificationService.createNotification(new Notification(userService.getUserByEmail(attendee).get().getId(), subject, htmlTemplate));
+            });
         }
         sendMimeEmail(userService.getUserById(event.getOrganizerId()).orElseThrow().getEmail(), subject, "Your event is created", htmlTemplate);
+        notificationService.createNotification(new Notification(userService.getUserById(event.getOrganizerId()).orElseThrow().getId(), subject, htmlTemplate));
     }
 
     public void sendEventCancellationNotifications(Event event) {
@@ -55,7 +64,11 @@ public class EmailService {
         event.getAttendees().forEach(attendee ->
             sendMimeEmail(attendee, subject, "Event cancelled", htmlTemplate)
         );
+        event.getAttendees().forEach(attendee ->
+            notificationService.createNotification(new Notification(userService.getUserByEmail(attendee).get().getId(), subject, htmlTemplate))
+        );
         sendMimeEmail(userService.getUserById(event.getOrganizerId()).orElseThrow().getEmail(), subject, "Your event has been cancelled", htmlTemplate);
+        notificationService.createNotification(new Notification(userService.getUserById(event.getOrganizerId()).orElseThrow().getId(), subject, htmlTemplate));
     }
 
     public void sendRSVPNotification(Event event, User user, String status) {
@@ -63,7 +76,9 @@ public class EmailService {
         String htmlTemplate = createRSVPTemplate(event, user, status);
 
         sendMimeEmail(userService.getUserById(event.getOrganizerId()).orElseThrow().getEmail(), subject, "RSVP update for your event", htmlTemplate);
+        notificationService.createNotification(new Notification(userService.getUserById(event.getOrganizerId()).orElseThrow().getId(), subject, htmlTemplate));
         sendMimeEmail(user.getEmail(), subject, "Your RSVP has been recorded", htmlTemplate);
+        notificationService.createNotification(new Notification(user.getId(), subject, htmlTemplate ));
     }
 
     public void sendPreferencesUpdateNotification(User user, List<String> categories) {
@@ -74,8 +89,8 @@ public class EmailService {
             categoryNames.add(categoryName);
         });
         String htmlTemplate = createPreferencesTemplate(categoryNames);
-
         sendMimeEmail(user.getEmail(), subject, "Your preferences have been updated", htmlTemplate);
+        notificationService.createNotification(new Notification(user.getId(), subject, htmlTemplate));
     }
 
     private void sendMimeEmail(String to, String subject, String text, String htmlContent) {

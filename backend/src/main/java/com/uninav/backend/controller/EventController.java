@@ -3,7 +3,6 @@ package com.uninav.backend.controller;
 import com.uninav.backend.model.Event;
 import com.uninav.backend.model.RSVP;
 import com.uninav.backend.service.*;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +20,16 @@ public class EventController {
 
     @Autowired
     private EventService eventService;
+
     @Autowired
     private EmailService emailService;
+
     @Autowired
     private UserPreferenceService userPreferenceService;
+
     @Autowired
     private CategoryService categoryService;
+
     @Autowired
     private UserService userService;
 
@@ -78,12 +81,15 @@ public class EventController {
         }
     }
 
-    @GetMapping("/delete-event")
-    public ResponseEntity<Map<String, Object>> deleteEvent(@RequestBody Event eventData) {
+    @DeleteMapping("/delete-event")
+    public ResponseEntity<Map<String, Object>> deleteEvent(@RequestBody Map<String, Object> eventData) {
         try {
-            eventService.deleteEvent(eventData.getId());
+            if (!eventService.isOrganizer(eventData.get("id").toString(), eventData.get("userId").toString())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to delete this event");
+            }
+            eventService.deleteEvent(eventData.get("id").toString());
+            emailService.sendEventCancellationNotifications(eventService.getEventById(eventData.get("id").toString()).orElseThrow());
             Map<String, Object> response = new HashMap<>();
-
             response.put("status", "success");
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }

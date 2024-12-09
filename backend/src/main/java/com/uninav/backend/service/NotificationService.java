@@ -31,5 +31,9 @@ public class NotificationService {
     public void deleteNotification(String notificationId) {
         notificationRepository.deleteById(notificationId);
     }
+
+    public List<Notification> findByUserIdAndRead(String userId, boolean b) {
+        return notificationRepository.findByUserIdAndRead(userId, b);
+    }
 }
 

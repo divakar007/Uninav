@@ -9,6 +9,8 @@ import '../../Assets/css/EventsPage.css';
 import { EventContext } from '../context/EventContext';
 import { CategoryContext } from '../context/CategoryContext';
 import { FaSearchLocation, FaMicrophone } from 'react-icons/fa';
+import axios from "axios";
+import SuccessModal from "../Models/SuccessModel";
 
 const EventsPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState(0);
@@ -21,6 +23,8 @@ const EventsPage: React.FC = () => {
     const categories = useContext(CategoryContext);
     const events = useContext(EventContext);
     const { user } = useUser();
+    const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+    const [successMessage, setSuccessMessage] = useState<string>("");
 
     const searchSuggestions = Array.from(new Set(events.flatMap(event => [
         event.name,
@@ -107,6 +111,32 @@ const EventsPage: React.FC = () => {
         }
     };
 
+    const handleOnDelete = (id: string, userId: string) => {
+
+        if (window.confirm("Are you sure you want to delete this event?")) {
+            axios.delete(`/event/delete-event`, {
+                data: {id, userId},
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then((response) => {
+                    if (response.data.status === "success") { // Adjust key based on backend response
+                        setSuccessMessage("Event deleted successfully!");
+                    } else {
+                        setSuccessMessage("Event deletion failed!");
+                    }
+                    setShowSuccessModal(true);
+                })
+                .catch((error) => {
+                    console.error('Error deleting event:', error);
+                    setSuccessMessage("An error occurred while deleting the event.");
+                    setShowSuccessModal(true);
+                });
+        }
+    };
+
+
     const renderFilterBar = () => (
         <div className="filter-bar">
             <div className="search" style={{ width: '100%' }}>
@@ -171,6 +201,13 @@ const EventsPage: React.FC = () => {
         </div>
     );
 
+
+    function handleSuccessFormClose() {
+        setShowSuccessModal(false);
+        setSuccessMessage("");
+        window.location.reload();
+    }
+
     return (
         <div className="event-cards-page">
             <Tabs
@@ -194,10 +231,11 @@ const EventsPage: React.FC = () => {
                         description={event.description}
                         imageUrl={event.imageUrl?.valueOf() || ""}
                         organizerId={event.organizerId}
-                        onDelete={() => {}}
+                        onDelete={handleOnDelete}
                     />
                 ))}
             </div>
+            {showSuccessModal && <SuccessModal show={showSuccessModal} message={successMessage} onClose={handleSuccessFormClose}/> }
         </div>
     );
 };

@@ -1,25 +1,50 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, {useEffect, useState} from 'react';
+import {motion, AnimatePresence} from 'framer-motion';
 import { FaBell, FaExclamationTriangle, FaEnvelope } from 'react-icons/fa';
 import './../../Assets/css/NotificationsPage.css';
+import axios from "axios";
+import {useUser} from "@clerk/clerk-react";
 
 interface Notification {
     id: string;
-    title: string;
+    userId: string;
+    subject: string;
     message: string;
     timestamp: string;
-    isRead: boolean;
-    type: 'alert' | 'general';
+    read: boolean;
 }
 
 const NotificationsPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState('all');
-
+    const [notifications, setNotifications] = useState<Notification[]>([]);
     const tabs = [
         { id: 'all', label: 'All Notifications', icon: <FaBell /> },
         { id: 'unread', label: 'Unread', icon: <FaEnvelope /> },
-        { id: 'alerts', label: 'Alerts', icon: <FaExclamationTriangle /> }
+        { id: 'read', label: 'Read', icon: <FaExclamationTriangle /> }
     ];
+    const {user} = useUser();
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            const response = await axios.get(`/notifications/get-notifications/${user?.emailAddresses}`, {
+                headers : {
+                    "Content-Type": "application/json",
+                }
+            });
+            setNotifications(response.data);
+        };
+        fetchNotifications();
+    }, [user?.emailAddresses]);
+
+
+    function handleOnChange(id: string) {
+        setActiveTab(id);
+        if(id === "read") {
+            setNotifications(notifications.filter(notification => notification.read));
+        } else if (id === "unread") {
+            setNotifications(notifications.filter(notification => !notification.read));
+        }
+    }
 
     return (
         <div className="notifications-container">
@@ -30,14 +55,14 @@ const NotificationsPage: React.FC = () => {
                     <motion.button
                         key={tab.id}
                         className={`notifications-tab ${activeTab === tab.id ? 'active' : ''}`}
-                        onClick={() => setActiveTab(tab.id)}
+                        onClick={() => handleOnChange(tab.id)}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
                         <span className="tab-icon">{tab.icon}</span>
                         {tab.label}
                         {tab.id === 'unread' && (
-                            <span className="notification-badge">5</span>
+                            <span className="notification-badge">{notifications.length}</span>
                         )}
                     </motion.button>
                 ))}
@@ -52,17 +77,21 @@ const NotificationsPage: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="notifications-content"
                 >
-                    {/* Placeholder content - will be replaced with actual notifications */}
-                    <div className="notification-card">
-                        <div className="notification-header">
-                            <FaBell className="notification-icon" />
-                            <span className="notification-time">2 hours ago</span>
-                        </div>
-                        <h3 className="notification-title">New Event Near You</h3>
-                        <p className="notification-message">
-                            There's a new event happening in your area!
-                        </p>
-                    </div>
+                    {notifications
+                        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) // Sort by timestamp (descending)
+                        .map((notification) => (
+                            <div key={notification.id} className="notification-card">
+                                <div className="notification-header">
+                                    <FaBell className="notification-icon" />
+                                    <span className="notification-time">{notification.timestamp}</span>
+                                </div>
+                                <h3 className="notification-title">{notification.subject}</h3>
+                                <p className="notification-message">
+                                    {notification.message}
+                                </p>
+                            </div>
+                        ))
+                    }
                 </motion.div>
             </AnimatePresence>
         </div>
