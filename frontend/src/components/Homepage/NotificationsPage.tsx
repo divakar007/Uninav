@@ -34,15 +34,15 @@ const NotificationsPage: React.FC = () => {
             setNotifications(response.data);
         };
         fetchNotifications();
-    }, []);
+    }, [user?.emailAddresses]);
 
 
     function handleOnChange(id: string) {
         setActiveTab(id);
         if(id === "read") {
-            notifications.filter(notification => notification.read);
+            setNotifications(notifications.filter(notification => notification.read));
         } else if (id === "unread") {
-            notifications.filter(notification => !notification.read);
+            setNotifications(notifications.filter(notification => !notification.read));
         }
     }
 
