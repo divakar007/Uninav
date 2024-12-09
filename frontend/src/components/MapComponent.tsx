@@ -17,8 +17,8 @@ const WEATHER_API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
 const libraries: Libraries = ["marker", "maps", "places"];
 
 const defaultCenter = {
-    lat: 37.7749,
-    lng: -122.4194,
+    lat: 37.228602108735906,
+    lng: -80.42337378773765
 };
 
 const MapComponent: React.FC = () => {
@@ -230,7 +230,7 @@ const MapComponent: React.FC = () => {
                 <GoogleMap
                     mapContainerStyle={containerStyle}
                     center={mapCenter}
-                    zoom={10}
+                    zoom={15}
                     onLoad={(map) => {
                         mapRef.current = map;
                     }}

@@ -8,9 +8,9 @@ import Tab from '@mui/material/Tab';
 import '../../Assets/css/EventsPage.css';
 import { EventContext } from '../context/EventContext';
 import { CategoryContext } from '../context/CategoryContext';
-import { FaSearchLocation, FaMicrophone } from 'react-icons/fa';
-import axios from "axios";
-import SuccessModal from "../Models/SuccessModel";
+import { FaSearchLocation } from 'react-icons/fa';
+import axios from 'axios';
+import SuccessModal from '../Models/SuccessModel';
 
 const EventsPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState(0);
@@ -18,24 +18,30 @@ const EventsPage: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [sortOption, setSortOption] = useState<string>('none');
     const [category, setCategory] = useState<string>('none');
-    const [isListening, setIsListening] = useState(false);
-    const recognitionRef = useRef<any>(null);
     const categories = useContext(CategoryContext);
     const events = useContext(EventContext);
     const { user } = useUser();
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
-    const [successMessage, setSuccessMessage] = useState<string>("");
+    const [successMessage, setSuccessMessage] = useState<string>('');
 
-    const searchSuggestions = Array.from(new Set(events.flatMap(event => [
-        event.name,
-    ])));
+    const searchSuggestions = Array.from(new Set(events.flatMap(event => [event.name])));
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setActiveTab(newValue);
     };
 
     const filterEvents = (eventsToFilter: typeof events) => {
-        return eventsToFilter.filter(event => {
+        // Sort based on the selected sortOption
+        const sortedEvents = [...eventsToFilter];
+        if (sortOption === 'trending') {
+            sortedEvents.sort((a, b) => {
+                const aTrendingScore = (a.attendees?.length || 0) + (a.likes || 0);
+                const bTrendingScore = (b.attendees?.length || 0) + (b.likes || 0);
+                return bTrendingScore - aTrendingScore; // Descending order
+            });
+        }
+
+        return sortedEvents.filter(event => {
             const searchLower = searchQuery.toLowerCase();
             const matchesSearch =
                 event.name?.toLowerCase().includes(searchLower) ||
@@ -56,7 +62,6 @@ const EventsPage: React.FC = () => {
 
             return (
                 (filter === 'all' || event.name.includes(filter)) &&
-                (sortOption === 'none' || event.name.includes(sortOption)) &&
                 (category === 'none' || event.categoryId.includes(category)) &&
                 matchesSearch
             );
@@ -66,76 +71,30 @@ const EventsPage: React.FC = () => {
     const allFilteredEvents = filterEvents(events);
     const myFilteredEvents = filterEvents(events.filter(event => event.organizerId === user?.id));
 
-    const startListening = () => {
-        if ('webkitSpeechRecognition' in window) {
-            recognitionRef.current = new (window as any).webkitSpeechRecognition();
-            recognitionRef.current.continuous = false;
-            recognitionRef.current.interimResults = false;
-            recognitionRef.current.lang = 'en-US';
-
-            recognitionRef.current.onstart = () => {
-                setIsListening(true);
-            };
-
-            recognitionRef.current.onresult = (event: any) => {
-                const transcript = event.results[0][0].transcript;
-                setSearchQuery(transcript);
-            };
-
-            recognitionRef.current.onerror = (event: any) => {
-                console.error('Speech recognition error:', event.error);
-                setIsListening(false);
-            };
-
-            recognitionRef.current.onend = () => {
-                setIsListening(false);
-            };
-
-            recognitionRef.current.start();
-        } else {
-            alert('Speech recognition is not supported in this browser.');
-        }
-    };
-
-    const stopListening = () => {
-        if (recognitionRef.current) {
-            recognitionRef.current.stop();
-        }
-    };
-
-    const handleMicClick = () => {
-        if (isListening) {
-            stopListening();
-        } else {
-            startListening();
-        }
-    };
-
     const handleOnDelete = (id: string, userId: string) => {
-
-        if (window.confirm("Are you sure you want to delete this event?")) {
-            axios.delete(`/event/delete-event`, {
-                data: {id, userId},
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-                .then((response) => {
-                    if (response.data.status === "success") { // Adjust key based on backend response
-                        setSuccessMessage("Event deleted successfully!");
+        if (window.confirm('Are you sure you want to delete this event?')) {
+            axios
+                .delete(`/event/delete-event`, {
+                    data: { id, userId },
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => {
+                    if (response.data.status === 'success') {
+                        setSuccessMessage('Event deleted successfully!');
                     } else {
-                        setSuccessMessage("Event deletion failed!");
+                        setSuccessMessage('Event deletion failed!');
                     }
                     setShowSuccessModal(true);
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error('Error deleting event:', error);
-                    setSuccessMessage("An error occurred while deleting the event.");
+                    setSuccessMessage('An error occurred while deleting the event.');
                     setShowSuccessModal(true);
                 });
         }
     };
-
 
     const renderFilterBar = () => (
         <div className="filter-bar">
@@ -150,7 +109,7 @@ const EventsPage: React.FC = () => {
                     onInputChange={(_event: React.SyntheticEvent, newValue: string | null) => {
                         if (newValue !== null) setSearchQuery(newValue);
                     }}
-                    getOptionLabel={(option) => option ? option.toString() : ''}
+                    getOptionLabel={option => (option ? option.toString() : '')}
                     style={{ width: '100%' }}
                     renderInput={(params: AutocompleteRenderInputParams) => (
                         <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
@@ -170,54 +129,49 @@ const EventsPage: React.FC = () => {
                                     disableUnderline: true,
                                 }}
                             />
-                            <button
-                                type="button"
-                                className={`mic__button ${isListening ? 'listening' : ''}`}
-                                onClick={handleMicClick}
-                            >
-                                <div className="mic__icon">
-                                    <FaMicrophone size={20} />
-                                </div>
-                            </button>
                         </div>
                     )}
                 />
             </div>
             <div className="dropdowns">
-                <select onChange={(e) => setSortOption(e.target.value)} value={sortOption} className="custom-dropdown">
+                <select
+                    onChange={e => setSortOption(e.target.value)}
+                    value={sortOption}
+                    className="custom-dropdown"
+                >
                     <option value="none">None</option>
                     <option value="trending">Trending</option>
                     <option value="free">Free</option>
                     <option value="paid">Paid</option>
                     <option value="rating">Rating (High to Low)</option>
                 </select>
-                <select onChange={(e) => setCategory(e.target.value)} value={category} className="custom-dropdown">
+                <select
+                    onChange={e => setCategory(e.target.value)}
+                    value={category}
+                    className="custom-dropdown"
+                >
                     <option value="none">None</option>
-                    {categories.map(cat =>
-                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                    )}
+                    {categories.map(cat => (
+                        <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                        </option>
+                    ))}
                 </select>
             </div>
         </div>
     );
 
-
     function handleSuccessFormClose() {
         setShowSuccessModal(false);
-        setSuccessMessage("");
+        setSuccessMessage('');
         window.location.reload();
     }
 
     return (
         <div className="event-cards-page">
-            <Tabs
-                value={activeTab}
-                onChange={handleTabChange}
-                centered
-                sx={{marginBottom: 2}}
-            >
-                <Tab label="Discover Events"/>
-                <Tab label="My Events"/>
+            <Tabs value={activeTab} onChange={handleTabChange} centered sx={{ marginBottom: 2 }}>
+                <Tab label="Discover Events" />
+                <Tab label="My Events" />
             </Tabs>
 
             {renderFilterBar()}
@@ -229,13 +183,19 @@ const EventsPage: React.FC = () => {
                         id={event.id}
                         name={event.name}
                         description={event.description}
-                        imageUrl={event.imageUrl?.valueOf() || ""}
+                        imageUrl={event.imageUrl?.valueOf() || ''}
                         organizerId={event.organizerId}
                         onDelete={handleOnDelete}
                     />
                 ))}
             </div>
-            {showSuccessModal && <SuccessModal show={showSuccessModal} message={successMessage} onClose={handleSuccessFormClose}/> }
+            {showSuccessModal && (
+                <SuccessModal
+                    show={showSuccessModal}
+                    message={successMessage}
+                    onClose={handleSuccessFormClose}
+                />
+            )}
         </div>
     );
 };
